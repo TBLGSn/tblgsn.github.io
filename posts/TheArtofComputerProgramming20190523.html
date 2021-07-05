@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>「译」唐纳德·克努特的《计算机程序设计的艺术》 | tblgsn's blog</title><meta name="keywords" content="程序设计,程序设计的艺术,翻译"><meta name="author" content="tblgsn"><meta name="copyright" content="tblgsn"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="article">
+<meta property="og:title" content="「译」唐纳德·克努特的《计算机程序设计的艺术》">
+<meta property="og:url" content="https://www.tblgsn.cn/posts/TheArtofComputerProgramming20190523.html">
+<meta property="og:site_name" content="tblgsn&#39;s blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.tblgsn.cn/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true">
+<meta property="article:published_time" content="2019-05-23T20:45:00.000Z">
+<meta property="article:modified_time" content="2021-07-05T13:44:03.812Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="程序设计">
+<meta property="article:tag" content="程序设计的艺术">
+<meta property="article:tag" content="翻译">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.tblgsn.cn/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.tblgsn.cn/posts/TheArtofComputerProgramming20190523"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="374EE84C3E993B1E00F59E527362909D"/><meta name="google-site-verification" content="vFjAqBNY7_hMtjx9gnjV-PixwPNZc5k3G7AjZpkydXM"/><meta name="baidu-site-verification" content="code-ORWX5vU35k"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '「译」唐纳德·克努特的《计算机程序设计的艺术》',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-07-05 13:44:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">25</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-comment-dots"></i><span> 心情空间</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> about</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">tblgsn's blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-comment-dots"></i><span> 心情空间</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> about</span></a></div></div><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">「译」唐纳德·克努特的《计算机程序设计的艺术》</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2019-05-23T20:45:00.000Z" title="发表于 2019-05-23 20:45:00">2019-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-05T13:44:03.812Z" title="更新于 2021-07-05 13:44:03">2021-07-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true"></p>
+<span id="more"></span>
+
+<p>  书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.<br>唐纳德的那四本精装卷的《计算机程序设计的艺术》—— 都用深紫色的书皮纸包裹着 ——  (这)传达出一个确切的消息：<br>让开,麻瓜们,站在你面前的是一个真正的程序员! 一位庄重的计算机科学实践者!</p>
+<p>  比尔盖茨曾经这样说过: 如果你觉得自己是一位优秀的程序员…读一读《计算机程序设计的艺术》…..如果你能读完<br>了整本书，不妨给我发个简历….(译注:原句是: 如果你觉得自己是一名优秀的程序员,那就去读《The Art of<br>Computer Programming（计算机程序设计艺术）》吧.对我来说，读完这本书不仅花了好几个月,而且还要求我有极<br>高的自律性. 如果你能读完这本书，不妨给我发个简历.)</p>
+<p>  对我来说,订购这个系列的书感觉像是(我取得了)一个重大的专业成就. 在我还没拿到这些书之前,我便早早的在我的书架<br>上为它们腾出一个位置,这就跟人们可能会在仓库中为一个崭新的主机腾出一个地方一样.</p>
+<p>  这也不是那些早早带着厌恶离开影院的影评人所作出的评价之一. 唐纳德的书是史诗般的作品.他是一位掌握计算机编程<br>基本原理、编程原理的数学根源和这两个领域交叉点处的真正的大师.(他站在了这两个领域的交叉点.) 他如此值得我们<br>尊敬.</p>
+<p>  只是我不配体会到到TAOCP(《The Art of Computer Programming》)所发出的那种魅力.</p>
+<p>  我已经读了三四遍卷一的序言.我试着想象如果整个系列都完成了会是什么感觉. 我将远离网络,带着大量的纸、几盒的<br>铅笔、TAOCP、一些数学书和足够使用90天的Adderall(注:一种治疗注意力缺失/多动症的药)独自搬到怀俄明山顶的小屋<br>中去.</p>
+<p>  我将在山中远足,深入的思考书中的基本算法.没有笔记本电脑,没有WiFi,没有电力 —— 这些都是使我分心的原因. 日落之后,<br>我将在摇曳的烛光中,继续阅读.我的梦想是在调和数、二项式系数和非线性数据结构的宇宙中尽情畅游.</p>
+<p>  但是,这些都没能发生.因此,当我昨天又一次的读完前言之后,我觉得我应该停下来反思一下我到目前为止的整个旅程.</p>
+<img src="/img/The-Art-of-Computer-Programming-by-Donald-Knuth-2.png?raw=true" width="430" height="600" />   
+  这就是唐纳德对于计算机的热爱,整个系列的书都专注于一个:20世纪50年代流行的IBM 650大型机.这是第一个被"大规模的生
+产"的计算机,这种计算机的造价高达几十万美元(以今天的美元). 这种类型的计算机就是他最先接触到的计算机.
+    
+  在20世纪50年代，对计算机感兴趣就等于对应用数学感兴趣. 早期的IBM 650具有基本的数学运算和控制结构,它是围绕十进制
+而不是二进制构建的.
+    
+  没有显示器,没有命令行,人便是操作系统：控制台允许操作员启用或者停止程序等等.
+    
+  假设您想编写一个程序来生成斐波那契数列. FORTRAN 此时还不存在 —— FORTRAN 的出现是在IBM 650发布四年之后.因此,在这最初的
+几年里,你不得不为你想做的事情编写出机器级别的操作代码.然后,手动的组装你的程序,用打孔机打出一堆"印"有你程序的卡片.
+    
+  当然,这里有几种方法来优化你的程序. 您可以设计一个更快的算法或部署更适合该问题的数据结构.
+    
+  你也能够优化程序的加载和运行方式 —— 利用机器的特性运行. 磁鼓存储器是现代硬盘的先驱，是 IBM 650 的主要存储器，但是它非
+常慢.作为一个程序员,您的目标是最大限度地减少 12,500 RPM 鼓机的旋转延迟，这样您的所有代码和数据都可以在执行期间的适当
+时刻轻松到达CPU. 您希望主机的CPU周期与这些鼓存储器旋转之间完美同步.
+    
+  计算机编程就是在这里(在数学和机械工程的粗糙交叉点)被诞生出来的. 它可以被任何一个非常聪明的人完全理解. 但这已不再是事实.
+唐纳德和那个时期的程序员必须比 IBM 650 (型号的计算机)更聪明. 它们熟记着每个真空管和控制开关的位置和作用. （而现在,)在
+这方面，我们不再比我们的电脑聪明.
+    
+  在第一段的前言中,唐纳德将编程称作为"一次审美体验,就像写诗或者绘画一样".我认为这种美感依旧吸引着每一个有抱负的程序员. 自从
+20世纪50年代以来,她沿着指数曲线行进了很长的距离之后,知道这种美感(依旧)保持完好是令人欣慰的. 虽然现在的我们不再需要设计出
+程序,然后将其输入到一个热的、响亮的计算器中去,但是编程的美依旧渗透在抽象的每一层.
+    
+  我想知道编写软件的这一表述行为的性质是如何受到(8kb内存内)手工组装的限制，以及制作穿孔卡的劳动的影响而形成的. 想象一下，在
+Knuth的时代,编写代码的时候，会有一种激动人心的感觉，当然也有走钢丝的风险. 一个小小的错误也是会让人感受到痛苦的.
+    
+  从这以后,几十年的抽象就像是一堆床垫一样(慢慢地)被堆积起来,现在我们中大多数人只是在上面打滚而已. 
+    
+  今天的软件的短反馈循环和扩展性是需要付出代价的.虽然如今的软件开发可能更加的有趣,但(在我们思考之前)进行黑客攻击也更容易，而
+且(这种软件开发的方式)会产生很多问题.伟大的软件仍然需要大量的思考，(但是很显然)我们很容易就会失去严谨性.
+    
+  IBM 650的约束是艰难而快速的，而今天的约束更为温和，往往是自我强加的. 手机的微小屏幕预示着经济软件和界面设计的创新浪潮. 令
+我感到震惊的是，任何选择目标开发环境限制的人都在为我们未来的创新选择竞争环境。
+    
+      
+***
+
+<blockquote>
+<ul>
+<li>原文地址:<a target="_blank" rel="noopener" href="https://medium.freecodecamp.org/the-art-of-computer-programming-by-donald-knuth-82e275c8764f">‘The Art of Computer Programming’ by Donald Knuth</a></li>
+<li>原文作者:<a target="_blank" rel="noopener" href="https://nerdcoach.io/">Carl Tashian</a></li>
+<li>译者：<a target="_blank" rel="noopener" href="https://github.com/TBLGSn">TBLGSn</a></li>
+<li>本文永久链接:<a target="_blank" rel="noopener" href="https://github.com/TBLGSn/TBLGSn.github.io/edit/master/_posts/2019-5-23-The%20Art%20of%20Computer%20Programming%E2%80%99%20by%20Donald%20Knuth.markdown">here</a><br>如果发现译文存在错误或其他需要改进的地方，欢迎到对译文进行修改并 PR. 文章开头的 <strong>本文永久链接</strong> 即为本文在 GitHub 上的 MarkDown 链接。</li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">tblgsn</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.tblgsn.cn/posts/TheArtofComputerProgramming20190523.html">https://www.tblgsn.cn/posts/TheArtofComputerProgramming20190523.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.tblgsn.cn" target="_blank">tblgsn's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><a class="post-meta__tags" href="/tags/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%89%BA%E6%9C%AF/">程序设计的艺术</a><a class="post-meta__tags" href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a></div><div class="post_share"><div class="social-share" data-image="/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/Livinginjapan20190524.html"><img class="prev-cover" src="/img/Lving-Japan/onlookerInsight-1.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">「转」我在日本乡下，过着神仙般的生活</div></div></a></div><div class="next-post pull-right"><a href="/posts/helloword20190523.html"><img class="next-cover" src="/img/top_image.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Hi~,I'm coming.</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a target="_blank" rel="noopener" href="//posts/CompromiseofComputers20190603.html" title="计算机的妥协"><img class="cover" src="/img/compromise-of-computer/Compromise-1.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-06-03</div><div class="title">计算机的妥协</div></div></a></div><div><a target="_blank" rel="noopener" href="//posts/Programming20190715.html" title="programming"><img class="cover" src="/img/Programming/Programming-1.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-07-15</div><div class="title">programming</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">tblgsn</div><div class="author-info__description">这里是@TBLGSn的个人博客</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">25</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tblgsn"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/tblgsn" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://twitter.com/tblgsn" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a><a class="social-icon" href="mailto:tblgsn.gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://leetcode-cn.com/u/tblgsn/" target="_blank" title="Leetcode"><i class="fas fa-laptop-code"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">欢迎你的来访！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/KnapsackProblem20210615.html" title="Letcode 背包问题一览"><img src="/img/KnapsackProblem.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Letcode 背包问题一览"/></a><div class="content"><a class="title" href="/posts/KnapsackProblem20210615.html" title="Letcode 背包问题一览">Letcode 背包问题一览</a><time datetime="2021-06-15T17:38:00.000Z" title="发表于 2021-06-15 17:38:00">2021-06-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/binarysearch20210522.html" title="Leetcode 74.搜索二维矩阵"><img src="/img/leetcode74.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Leetcode 74.搜索二维矩阵"/></a><div class="content"><a class="title" href="/posts/binarysearch20210522.html" title="Leetcode 74.搜索二维矩阵">Leetcode 74.搜索二维矩阵</a><time datetime="2021-05-22T17:38:00.000Z" title="发表于 2021-05-22 17:38:00">2021-05-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/changesite20210518.html" title="网站搭建方案"><img src="/img/changesite.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网站搭建方案"/></a><div class="content"><a class="title" href="/posts/changesite20210518.html" title="网站搭建方案">网站搭建方案</a><time datetime="2021-05-18T23:25:00.000Z" title="发表于 2021-05-18 23:25:00">2021-05-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/effectiveCplusplus20210512.html" title="Effective C++ 笔记四"><img src="/img/effectiveCplusplus4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Effective C++ 笔记四"/></a><div class="content"><a class="title" href="/posts/effectiveCplusplus20210512.html" title="Effective C++ 笔记四">Effective C++ 笔记四</a><time datetime="2021-05-12T20:34:00.000Z" title="发表于 2021-05-12 20:34:00">2021-05-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/effectiveCplusplus20210427.html" title="Effective C++ 笔记三">Effective C++ 笔记三</a><time datetime="2021-04-27T19:54:00.000Z" title="发表于 2021-04-27 19:54:00">2021-04-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2021 By tblgsn</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a href="https://beian.miit.gov.cn/" target="_blank">津ICP备2021004226号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'zv0F2VBhQXCVHGFzlfJrNhc9-MdYXbMMI',
+      appKey: '9rYptRrGoo3mRqOCLTLxUXcy',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+      requiredFields: ["nick,mail"],
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>vcpkg教程 | tblgsn's blog</title><meta name="keywords" content="opencv,opengl,vcpkg,VScode"><meta name="author" content="tblgsn"><meta name="copyright" content="tblgsn"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="vcpkg 可以帮助你在 不同的平台上管理 C 和 C++库。通过微软的这项工具，你可以很简单的安装各种 C++ 的库，例如 opencv 、opengl等.文章主要包括以下的内容:  如何安装vcpkg vcpkg 的各种命令 如何在 cmake 中使用 vcpkg 如何在 VSCode 中使用 vcpkg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vcpkg教程">
+<meta property="og:url" content="https://www.tblgsn.cn/posts/vcpkg20210416.html">
+<meta property="og:site_name" content="tblgsn&#39;s blog">
+<meta property="og:description" content="vcpkg 可以帮助你在 不同的平台上管理 C 和 C++库。通过微软的这项工具，你可以很简单的安装各种 C++ 的库，例如 opencv 、opengl等.文章主要包括以下的内容:  如何安装vcpkg vcpkg 的各种命令 如何在 cmake 中使用 vcpkg 如何在 VSCode 中使用 vcpkg">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.tblgsn.cn/img/avatar.png">
+<meta property="article:published_time" content="2021-04-16T17:00:00.000Z">
+<meta property="article:modified_time" content="2021-07-05T13:44:03.812Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="opencv">
+<meta property="article:tag" content="opengl">
+<meta property="article:tag" content="vcpkg">
+<meta property="article:tag" content="VScode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.tblgsn.cn/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.tblgsn.cn/posts/vcpkg20210416"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="374EE84C3E993B1E00F59E527362909D"/><meta name="google-site-verification" content="vFjAqBNY7_hMtjx9gnjV-PixwPNZc5k3G7AjZpkydXM"/><meta name="baidu-site-verification" content="code-ORWX5vU35k"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vcpkg教程',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-07-05 13:44:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">25</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-comment-dots"></i><span> 心情空间</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> about</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/top_image.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">tblgsn's blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-comment-dots"></i><span> 心情空间</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> about</span></a></div></div><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">vcpkg教程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-04-16T17:00:00.000Z" title="发表于 2021-04-16 17:00:00">2021-04-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-05T13:44:03.812Z" title="更新于 2021-07-05 13:44:03">2021-07-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">566</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="vcpkg教程"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>vcpkg 可以帮助你在 不同的平台上管理 C 和 C++库。通过微软的这项工具，你可以很简单的安装各种 C++ 的库，例如 opencv 、opengl等.<br>文章主要包括以下的内容:</p>
+<ul>
+<li>如何安装vcpkg</li>
+<li>vcpkg 的各种命令</li>
+<li>如何在 cmake 中使用 vcpkg</li>
+<li>如何在 VSCode 中使用 vcpkg <span id="more"></span></li>
+</ul>
+<h2 id="1-安装-Linux-开发工具"><a href="#1-安装-Linux-开发工具" class="headerlink" title="1. 安装 Linux 开发工具"></a>1. 安装 Linux 开发工具</h2><p>在 Ubuntu 中你需要执行以下命令来安装工具包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install build-essential tar curl zip unzip</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-安装-vcpkpg，以及各种命令"><a href="#2-安装-vcpkpg，以及各种命令" class="headerlink" title="2.安装 vcpkpg，以及各种命令"></a>2.安装 vcpkpg，以及各种命令</h2><p>在安装完 linux 平台下的开发工具后, vcpkg 的安装其实很简单，只需要执行以下的命令即可:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 可选，选择一个目录安装vcpkg</span></span><br><span class="line">cd [路径]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 下载vcpkg</span></span><br><span class="line">git clone https://github.com/microsoft/vcpkg</span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行 bootstrap 脚本</span></span><br><span class="line">./vcpkg/bootstrap-vcpkg.sh</span><br></pre></td></tr></table></figure>
+
+<p>vcpkg 就已经安装好了,现在你可以通过以下的命令来安装你想安装的各种库了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 进入 vcpkg 安装目录</span></span><br><span class="line">cd vcpkg</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看 <span class="built_in">help</span> 信息(你也可以修改/etc/profile文件在PATH中添加vcpkg)</span></span><br><span class="line">./vcpkg help</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查找一个包</span></span><br><span class="line">./vcpkg search  [包名]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装一个包</span></span><br><span class="line">./vcpkg install [包名]</span><br><span class="line"></span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-如何在cmake-中使用-vcpkg"><a href="#3-如何在cmake-中使用-vcpkg" class="headerlink" title="3. 如何在cmake 中使用 vcpkg"></a>3. 如何在cmake 中使用 vcpkg</h2><p>为了在cmake中使用vcpkg，您需要使用以下工具链文件:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 注意路径问题</span></span><br><span class="line">cmake -B [build directory] -S . -DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake</span><br><span class="line"><span class="meta">$</span><span class="bash"> cmake --build [build directory]</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意你依旧需要在 CMKAELISTS.txt 文件中使用find_package来使用第三方库。</p>
+</blockquote>
+<h2 id="4-在-VSCode-中如何使用vcpkg"><a href="#4-在-VSCode-中如何使用vcpkg" class="headerlink" title="4. 在 VSCode 中如何使用vcpkg"></a>4. 在 VSCode 中如何使用vcpkg</h2><p>使用 IDE 能够使得 第三方库 使用变得更加简单.<br>你需要 添加以下的代码到你的 settings.json,这样就可以让 <strong>cmake Tools</strong> 自动使用vcpkg 中的第三方库(而不用指定 -DCMAKE_TOOLCHAIN_FILE参数 ).</p>
+<blockquote>
+<p>你需要安装 Cmake Tools 这个插件， 它会把生成的文件放在build 文件夹下,此时你可以使用 make 命令 “make Makefile” ，或者点击 VScode 底部的 lunch 按键，即可生成可运行文件</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注意修改路径</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;cmake.configureSettings&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;CMAKE_TOOLCHAIN_FILE&quot;</span>: <span class="string">&quot;[vcpkg root]/scripts/buildsystems/vcpkg.cmake&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意 你还需要确保你的 CMakeLists,txt 文件是正确的.<br>将vcpkg 的路径加入 c_cpp_properties.json 文件的includePath 字段，才能够使用代码自动补全功能<br>你可以参考<a target="_blank" rel="noopener" href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md">官方的例子</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">tblgsn</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.tblgsn.cn/posts/vcpkg20210416.html">https://www.tblgsn.cn/posts/vcpkg20210416.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.tblgsn.cn" target="_blank">tblgsn's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/opencv/">opencv</a><a class="post-meta__tags" href="/tags/opengl/">opengl</a><a class="post-meta__tags" href="/tags/vcpkg/">vcpkg</a><a class="post-meta__tags" href="/tags/VScode/">VScode</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/SGISTL20210423.html"><img class="prev-cover" src="/img/STL.png?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">STL 源码解析</div></div></a></div><div class="next-post pull-right"><a href="/posts/effectiveCplusplus20212053.html"><img class="next-cover" src="/img/top_image.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Effective C++ 笔记二</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85-Linux-%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7"><span class="toc-text">1. 安装 Linux 开发工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85-vcpkpg%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4"><span class="toc-text">2.安装 vcpkpg，以及各种命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E5%9C%A8cmake-%E4%B8%AD%E4%BD%BF%E7%94%A8-vcpkg"><span class="toc-text">3. 如何在cmake 中使用 vcpkg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%9C%A8-VSCode-%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8vcpkg"><span class="toc-text">4. 在 VSCode 中如何使用vcpkg</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2021 By tblgsn</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a href="https://beian.miit.gov.cn/" target="_blank">津ICP备2021004226号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'zv0F2VBhQXCVHGFzlfJrNhc9-MdYXbMMI',
+      appKey: '9rYptRrGoo3mRqOCLTLxUXcy',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+      requiredFields: ["nick,mail"],
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
