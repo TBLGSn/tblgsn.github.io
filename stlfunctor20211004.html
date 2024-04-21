@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在 STL 中 functor 扮演着重要的角色。在 STL 中 functor 默默的为 algorithms 提供支持，因此 functor 通常与 algorithm 同时出现,更为准确的来说：  “functor (包括functor adapter) 总是伴随着 algorithm 同时出现。” 一个常见的使用场景如下:(这段代码会打印出容器 v 中的所有元素) 123456789&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 如何编写出一个完美的 functor">
+<meta property="og:url" content="https://tblgsn.github.io/stlfunctor20211004.html">
+<meta property="og:site_name" content="tblgsn的个人博客">
+<meta property="og:description" content="在 STL 中 functor 扮演着重要的角色。在 STL 中 functor 默默的为 algorithms 提供支持，因此 functor 通常与 algorithm 同时出现,更为准确的来说：  “functor (包括functor adapter) 总是伴随着 algorithm 同时出现。” 一个常见的使用场景如下:(这段代码会打印出容器 v 中的所有元素) 123456789&#x2F;&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tblgsn.github.io/img/functor-myfun.png">
+<meta property="og:image" content="https://tblgsn.github.io/img/STL-functor.png">
+<meta property="article:published_time" content="2021-10-04T11:09:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T02:17:00.497Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="STL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tblgsn.github.io/img/functor-myfun.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>C++ 如何编写出一个完美的 functor</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="tblgsn的个人博客" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/git20211019.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/Ur520211003.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/stlfunctor20211004.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/stlfunctor20211004.html&text=C++ 如何编写出一个完美的 functor"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/stlfunctor20211004.html&is_video=false&description=C++ 如何编写出一个完美的 functor"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=C++ 如何编写出一个完美的 functor&body=Check out this article: https://tblgsn.github.io/stlfunctor20211004.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/stlfunctor20211004.html&name=C++ 如何编写出一个完美的 functor&description=&lt;p&gt;在 STL 中 functor 扮演着重要的角色。在 STL 中 functor 默默的为 algorithms 提供支持，因此 functor 通常与 algorithm 同时出现,更为准确的来说：  “functor (包括functor adapter) 总是伴随着 algorithm 同时出现。”&lt;/p&gt;
+&lt;p&gt;一个常见的使用场景如下:(这段代码会打印出容器 v 中的所有元素)&lt;/p&gt;
+&lt;figure class=&#34;highlight c++&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 自己定义的一般函数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;myfun&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  	&lt;span class=&#34;function&#34;&gt;&lt;span class=&#34;type&#34;&gt;bool&lt;/span&gt; &lt;span class=&#34;title&#34;&gt;operator&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;type&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; i)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;		  std::cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt;std::endl;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;//填充一个 vector v，然后使用 for_each 算法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;for_each(v.&lt;span class=&#34;built_in&#34;&gt;begin&lt;/span&gt;(), v.&lt;span class=&#34;built_in&#34;&gt;end&lt;/span&gt;(), myfunction);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/stlfunctor20211004.html&t=C++ 如何编写出一个完美的 functor"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-STL-%E4%B8%AD%E7%9A%84-functor-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">1. STL 中的 functor 源码解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-const-%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7%E4%BB%A5%E5%8F%8A%E9%80%9A%E8%BF%87%E4%BC%A0%E5%80%BC"><span class="toc-number">2.</span> <span class="toc-text">2. const 的重要性以及通过传值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E8%AE%A9%E6%88%91%E4%BB%AC%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99%E7%9A%84%E4%B8%80%E8%88%AC%E5%87%BD%E6%95%B0%E8%9E%8D%E5%85%A5%E5%88%B0-STL-%E5%BA%93"><span class="toc-number">3.</span> <span class="toc-text">3. 如何让我们自己编写的一般函数融入到 STL 库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E2%80%94%E6%88%90%E4%B8%BA%E4%B8%80%E4%B8%AA-functor-%E7%9A%84%E5%85%B3%E9%94%AE"><span class="toc-number">4.</span> <span class="toc-text">总结—成为一个 functor 的关键</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        C++ 如何编写出一个完美的 functor
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">@TBLGSn</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-10-04T11:09:00.000Z" class="dt-published" itemprop="datePublished">2021-10-04</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/C/" rel="tag">C++</a>, <a class="p-category" href="/tags/STL/" rel="tag">STL</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>在 STL 中 functor 扮演着重要的角色。在 STL 中 functor 默默的为 algorithms 提供支持，因此 functor 通常与 algorithm 同时出现,更为准确的来说：  “functor (包括functor adapter) 总是伴随着 algorithm 同时出现。”</p>
+<p>一个常见的使用场景如下:(这段代码会打印出容器 v 中的所有元素)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自己定义的一般函数</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">myfun</span>&#123;</span><br><span class="line">  	<span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> <span class="type">int</span> i)</span> </span>&#123;</span><br><span class="line">		  std::cout &lt;&lt; i &lt;&lt;std::endl;</span><br><span class="line">  	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//填充一个 vector v，然后使用 for_each 算法</span></span><br><span class="line"></span><br><span class="line">for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), myfunction);</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>右侧除了说明 for_each 调用方式外，还包含了 for_each 算法的源代码。 for_each 函数会遍历当前的容器,通过 取值运算符(‘*’)不断的取出容器中的值，并作为参数传递给函数对象f, 函数对象指向的是我们定义的 <strong>myfun</strong> “functor”。这相当于调用 <strong>myfun</strong>中的 operator()方法。</p>
+<blockquote>
+<p>另外，还有一个很重要的一点是 function object 总是被设计成 按值传递，这意味着通常是通过 copy 操作完成赋值的.</p>
+</blockquote>
+<p><img src="/img/functor-myfun.png" alt="用户自己定义的 &#39;functor&#39;"></p>
+<p>在接触 functor 时，另一个跳不过的部件也十分的重要，它们就是 funtion adaptors ，他们将 functor 改头换面，以提供给用户更容易使用的接口。通常，function adaptors 在封装 functor 时,会向 functor 提问(ask)。functor 必须作出回答，这样 function 才能完成封装任务。 </p>
+<p><img src="/img/STL-functor.png" alt="STL中的functor 与 function adaptors"></p>
+<h2 id="1-STL-中的-functor-源码解析"><a href="#1-STL-中的-functor-源码解析" class="headerlink" title="1. STL 中的 functor 源码解析"></a>1. STL 中的 functor 源码解析</h2><p>一个典型的 STL 中的 functor 源代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">negate</span> : <span class="keyword">public</span> unary_function&lt;T, T&gt; &#123;</span><br><span class="line">    <span class="function">T <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> T&amp; x)</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> -x; &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>negate 会将调用取负操作符(可能被重载过)，并返回取负之后的值。注意返回的类型是 <em>T</em>,而不是 *T&amp;*，你可能经常性的返回 reference 以获得更高的效率,然而在这里这样做很危险。</p>
+<blockquote>
+<p>这一点在 《Effective C++ 》Item 21 中被提及。</p>
+</blockquote>
+<p>此外，这里有几点需要注意: </p>
+<ul>
+<li>使用了两个 const,这使得 该 functor 只与输入的参数有关。对于相同的参数，其返回的值应该是相同的，对于不同的值返回的类型。</li>
+<li>这一点是上面的延伸  ———— functor 不应该维护状态。</li>
+<li>negate 继承了一个奇怪的东西?<br>下面我们慢慢回答 “如何书写出一个完美的 functor”。</li>
+</ul>
+<h2 id="2-const-的重要性以及通过传值"><a href="#2-const-的重要性以及通过传值" class="headerlink" title="2. const 的重要性以及通过传值"></a>2. const 的重要性以及通过传值</h2><blockquote>
+<p>在 《effective C++》中作者曾经建议：”多使用 const 关键字”。<br>猜想一下,下面的这段代码的运行结果会是什么样子:</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Predicate</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//借助成员初值列(member initialization list) 可以更高效率的初始化</span></span><br><span class="line">    <span class="built_in">Predicate</span>():<span class="built_in">timeCalled</span>(<span class="number">0</span>)&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> <span class="type">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 当timeCalled 等于 3 时，返回 true</span></span><br><span class="line">        <span class="keyword">return</span> ++timeCalled  == <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> timeCalled;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//填充 6 个元素</span></span><br><span class="line">v.<span class="built_in">erase</span>(<span class="built_in">remove_if</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(),<span class="built_in">Predicate</span>()),</span><br><span class="line">            v.<span class="built_in">end</span>());</span><br></pre></td></tr></table></figure>
+<p>我们尝试删除 vector 中第三个元素,然而上面的这段代码实际上会删除两个元素(一个是第三个元素，一个是第六个元素)！！<br>我们必须通过阅读 remove_if 的源代码才能理解程序的底层到底发生了什么。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ForwardIterator</span>, <span class="keyword">class</span> <span class="title class_">Predicate</span>&gt;</span><br><span class="line"><span class="function">ForwardIterator <span class="title">remove_if</span><span class="params">(ForwardIterator first, ForwardIterator last, Predicate pred)</span> </span>&#123;</span><br><span class="line">  first = <span class="built_in">find_if</span>(first, last, pred);</span><br><span class="line">  ForwardIterator next = first;</span><br><span class="line">  <span class="keyword">return</span> first == last ? first : <span class="built_in">remove_copy_if</span>(++next, last, first, pred);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当遇见第三个元素时，first 不等于 last，所以会调用 remove_copy_if 函数然而由于 pred 是通过传值传递的，所以这个时候中的 pred 中的 timeCalled 的值是 0！</p>
+</blockquote>
+<p>你可能会认为是 STL 设计的不合理，所以才导致程序出现了 bug? 当我们尝试通过引用(reference)来传递 pred 对象时(这需要修改remove_if、find_if 、remove_copy_if三者), 此时程序能够顺利的完成给定的任务。<br>然而我们再来查看另一个例子:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> Predication&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">myfun</span><span class="params">(Iterator begin, Iterator end, Predication&amp; f)</span></span>&#123; <span class="comment">//通过引用方式传递</span></span><br><span class="line">    <span class="keyword">for</span>(; begin != end; ++ begin) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">f</span>(*begin)) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;访问第三个元素&quot;</span>&lt;&lt;std::endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>&#125;;</span><br><span class="line">Predicate p;</span><br><span class="line"><span class="built_in">myfun</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), p);</span><br></pre></td></tr></table></figure>
+<p>上面的代码会在遇见容器v中的第三个元素时，打印出”访问第三个元素”。此时你可能会觉得当我们定义 algorithm 中的 Predication 对象，就应该使用按 reference 传递的方式。<br>然而，当我们简单的连续调用两次 myfun 之后，你会发现程序只会打印一次”访问第三个元素”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">myfun</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), p);</span><br><span class="line"><span class="built_in">myfun</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), p);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>对于相同的输入，我们的 function 每次的表现不一样？<br>这时如果你戏剧性的将 myfun中的函数对象f 改为按值传递，程序就可以顺利的打印两次”访问第三个元素”了;</p>
+</blockquote>
+<p>怎么回事，有时按值传递 Predication 对象，程序会顺利的运行。有时我们按 reference 传递 Predication 对象 程序也能够顺利的运行。</p>
+<p>要想做到行为统一,真正的秘诀在于使用 const, 以及按值传递 Predication。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Predicate</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Predicate</span>():<span class="built_in">timeCalled</span>(<span class="number">0</span>)&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> <span class="type">int</span> i)</span> <span class="type">const</span> </span>&#123; <span class="comment">//此时程序不能通过编译</span></span><br><span class="line">        <span class="keyword">return</span> ++timeCalled  == <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> timeCalled;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>第二个 const 阻止了我们修改函数的状态，这样我们就可以避免了对于相同的输入函数会给出不同的输出结果。<br>而按值传递 Predication 除了这以外，还能让我们的代码保持与 STL 库的一致性。</p>
+<h2 id="3-如何让我们自己编写的一般函数融入到-STL-库"><a href="#3-如何让我们自己编写的一般函数融入到-STL-库" class="headerlink" title="3. 如何让我们自己编写的一般函数融入到 STL 库"></a>3. 如何让我们自己编写的一般函数融入到 STL 库</h2><p>当我们按照上面的”建议”编写出自己的函数之后，并不是一切都万事大吉了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//bool interesting(const int i );</span></span><br><span class="line"></span><br><span class="line">vector&lt;<span class="type">int</span>&gt; ve = &#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>&#125;;</span><br><span class="line"><span class="built_in">find_if</span>(ve.<span class="built_in">begin</span>(), ve.<span class="built_in">end</span>(),</span><br><span class="line">    interesting);<span class="comment">//interesting 是一个符合之前规定的 function</span></span><br></pre></td></tr></table></figure>
+<p>你突然想的到上面的补集，也就是得到不感兴趣(not interesting)的数。而你对于 STL 函数十分的熟悉，你会想到使用 not1函数来得到 interesting 的相反数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find_if</span>(ve.<span class="built_in">begin</span>(), ve.<span class="built_in">end</span>(),</span><br><span class="line">    <span class="built_in">not1</span>(interesting)); <span class="comment">//遗憾的是这样的代码并不能运行</span></span><br></pre></td></tr></table></figure>
+<p>因为 not1 实际上应该是一种 functor adapter,它需要向 funtctor <strong>提问</strong>才能顺利的运行。</p>
+<ul>
+<li>ptr_fun<br>要想让程序顺利的运行，一种方式是使用 ptr_fun 函数。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find_if</span>(ve.<span class="built_in">begin</span>(), ve.<span class="built_in">end</span>(), <span class="built_in">not1</span>(<span class="built_in">ptr_fun</span>(interesting)));</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ptr_fun 本质上也是一种 function adapter。</p>
+</blockquote>
+</li>
+<li>继承 unary_function 或 binary_function<br>要想让你自己编写的函数真正的成为一个functor,除了使用 ptr_fun 之外，你还可以继承下面的两个仿函数。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一元仿函数</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Arg</span>, <span class="keyword">class</span> <span class="title class_">Result</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">unary_function</span> &#123;</span><br><span class="line">    <span class="keyword">typedef</span> Arg argument_type; <span class="comment">//参数类型</span></span><br><span class="line">    <span class="keyword">typedef</span> Result result_type;<span class="comment">//返回值类型</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//二元仿函数</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Arg1</span>, <span class="keyword">class</span> <span class="title class_">Arg2</span>, <span class="keyword">class</span> <span class="title class_">Result</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">binary_function</span> &#123;</span><br><span class="line">    <span class="keyword">typedef</span> Arg1 first_argument_type;</span><br><span class="line">    <span class="keyword">typedef</span> Arg2 second_argument_type;</span><br><span class="line">    <span class="keyword">typedef</span> Result result_type;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+这两个一个分别对应 一元函数和二元函数。当你的 function class 继承他们之一时 struct 中的 typedef 也就被继承下来了。此时我们的 function 就可以回答 not1(functor adaptors 的提问了)。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">myfun</span>: <span class="keyword">public</span> std::unary_function&lt;T, <span class="type">bool</span>&gt;&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> <span class="type">int</span> i )</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">//都返回 true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">find_if</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">not1</span>(<span class="built_in">myfun</span>&lt;<span class="type">int</span>&gt;()));</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="总结—成为一个-functor-的关键"><a href="#总结—成为一个-functor-的关键" class="headerlink" title="总结—成为一个 functor 的关键"></a>总结—成为一个 functor 的关键</h2><pre><code>- 一个优秀的 functor 的输出应该只与输入有关，让 functor 维持一个状态并不总是一件好事
+- 让你的 function 融入到 STL 的 functor 体系中，会更便于使用。 
+</code></pre>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-STL-%E4%B8%AD%E7%9A%84-functor-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">1. STL 中的 functor 源码解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-const-%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7%E4%BB%A5%E5%8F%8A%E9%80%9A%E8%BF%87%E4%BC%A0%E5%80%BC"><span class="toc-number">2.</span> <span class="toc-text">2. const 的重要性以及通过传值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E8%AE%A9%E6%88%91%E4%BB%AC%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99%E7%9A%84%E4%B8%80%E8%88%AC%E5%87%BD%E6%95%B0%E8%9E%8D%E5%85%A5%E5%88%B0-STL-%E5%BA%93"><span class="toc-number">3.</span> <span class="toc-text">3. 如何让我们自己编写的一般函数融入到 STL 库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E2%80%94%E6%88%90%E4%B8%BA%E4%B8%80%E4%B8%AA-functor-%E7%9A%84%E5%85%B3%E9%94%AE"><span class="toc-number">4.</span> <span class="toc-text">总结—成为一个 functor 的关键</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/stlfunctor20211004.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/stlfunctor20211004.html&text=C++ 如何编写出一个完美的 functor"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/stlfunctor20211004.html&is_video=false&description=C++ 如何编写出一个完美的 functor"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=C++ 如何编写出一个完美的 functor&body=Check out this article: https://tblgsn.github.io/stlfunctor20211004.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/stlfunctor20211004.html&title=C++ 如何编写出一个完美的 functor"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/stlfunctor20211004.html&name=C++ 如何编写出一个完美的 functor&description=&lt;p&gt;在 STL 中 functor 扮演着重要的角色。在 STL 中 functor 默默的为 algorithms 提供支持，因此 functor 通常与 algorithm 同时出现,更为准确的来说：  “functor (包括functor adapter) 总是伴随着 algorithm 同时出现。”&lt;/p&gt;
+&lt;p&gt;一个常见的使用场景如下:(这段代码会打印出容器 v 中的所有元素)&lt;/p&gt;
+&lt;figure class=&#34;highlight c++&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 自己定义的一般函数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;myfun&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  	&lt;span class=&#34;function&#34;&gt;&lt;span class=&#34;type&#34;&gt;bool&lt;/span&gt; &lt;span class=&#34;title&#34;&gt;operator&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;type&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; i)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;		  std::cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt;std::endl;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;//填充一个 vector v，然后使用 for_each 算法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;for_each(v.&lt;span class=&#34;built_in&#34;&gt;begin&lt;/span&gt;(), v.&lt;span class=&#34;built_in&#34;&gt;end&lt;/span&gt;(), myfunction);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/stlfunctor20211004.html&t=C++ 如何编写出一个完美的 functor"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2024
+    tblgsn
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'TBLGSn/tblgsn.github.io';
+      var utterances_issue_term = 'url';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

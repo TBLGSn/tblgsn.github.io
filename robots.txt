@@ -1,0 +1,8 @@
+User-agent: *
+
+Disallow: /img/
+Disallow: /artitalk/
+Disallow: /css/
+Disallow: /js/
+
+Sitemap: https://www.tblgsn.cn/sitemap.xml

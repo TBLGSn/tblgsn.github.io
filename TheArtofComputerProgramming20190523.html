@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「译」唐纳德·克努特的《计算机程序设计的艺术》">
+<meta property="og:url" content="https://tblgsn.github.io/TheArtofComputerProgramming20190523.html">
+<meta property="og:site_name" content="tblgsn的个人博客">
+<meta property="og:description" content="书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tblgsn.github.io/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true">
+<meta property="og:image" content="https://tblgsn.github.io/img/The-Art-of-Computer-Programming-by-Donald-Knuth-2.png?raw=true">
+<meta property="article:published_time" content="2019-05-23T20:45:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T02:17:00.497Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="程序设计">
+<meta property="article:tag" content="程序设计的艺术">
+<meta property="article:tag" content="翻译">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tblgsn.github.io/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>「译」唐纳德·克努特的《计算机程序设计的艺术》</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="tblgsn的个人博客" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/Livinginjapan20190524.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/helloword20190523.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&text=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&is_video=false&description=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=「译」唐纳德·克努特的《计算机程序设计的艺术》&body=Check out this article: https://tblgsn.github.io/TheArtofComputerProgramming20190523.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&name=「译」唐纳德·克努特的《计算机程序设计的艺术》&description=&lt;p&gt;&lt;img src=&#34;/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true&#34;&gt;&lt;/p&gt;
+&lt;p&gt;书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&t=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        「译」唐纳德·克努特的《计算机程序设计的艺术》
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">@TBLGSn</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-23T20:45:00.000Z" class="dt-published" itemprop="datePublished">2019-05-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" rel="tag">程序设计</a>, <a class="p-category" href="/tags/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%89%BA%E6%9C%AF/" rel="tag">程序设计的艺术</a>, <a class="p-category" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true"></p>
+<p>书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.</p>
+<span id="more"></span>
+<p>唐纳德的那四本精装卷的《计算机程序设计的艺术》—— 都用深紫色的书皮纸包裹着 ——  (这)传达出一个确切的消息：<br>让开,麻瓜们,站在你面前的是一个真正的程序员! 一位庄重的计算机科学实践者!</p>
+<!--more-->  
+<p>  比尔盖茨曾经这样说过: 如果你觉得自己是一位优秀的程序员…读一读《计算机程序设计的艺术》…..如果你能读完<br>了整本书，不妨给我发个简历….(译注:原句是: 如果你觉得自己是一名优秀的程序员,那就去读《The Art of<br>Computer Programming（计算机程序设计艺术）》吧.对我来说，读完这本书不仅花了好几个月,而且还要求我有极<br>高的自律性. 如果你能读完这本书，不妨给我发个简历.)</p>
+<p>  对我来说,订购这个系列的书感觉像是(我取得了)一个重大的专业成就. 在我还没拿到这些书之前,我便早早的在我的书架<br>上为它们腾出一个位置,这就跟人们可能会在仓库中为一个崭新的主机腾出一个地方一样.</p>
+<p>  这也不是那些早早带着厌恶离开影院的影评人所作出的评价之一. 唐纳德的书是史诗般的作品.他是一位掌握计算机编程<br>基本原理、编程原理的数学根源和这两个领域交叉点处的真正的大师.(他站在了这两个领域的交叉点.) 他如此值得我们<br>尊敬.</p>
+<p>  只是我不配体会到到TAOCP(《The Art of Computer Programming》)所发出的那种魅力.</p>
+<p>  我已经读了三四遍卷一的序言.我试着想象如果整个系列都完成了会是什么感觉. 我将远离网络,带着大量的纸、几盒的<br>铅笔、TAOCP、一些数学书和足够使用90天的Adderall(注:一种治疗注意力缺失&#x2F;多动症的药)独自搬到怀俄明山顶的小屋<br>中去.</p>
+<p>  我将在山中远足,深入的思考书中的基本算法.没有笔记本电脑,没有WiFi,没有电力 —— 这些都是使我分心的原因. 日落之后,<br>我将在摇曳的烛光中,继续阅读.我的梦想是在调和数、二项式系数和非线性数据结构的宇宙中尽情畅游.</p>
+<p>  但是,这些都没能发生.因此,当我昨天又一次的读完前言之后,我觉得我应该停下来反思一下我到目前为止的整个旅程.</p>
+<img src="/img/The-Art-of-Computer-Programming-by-Donald-Knuth-2.png?raw=true" width="430" height="600" />   
+  这就是唐纳德对于计算机的热爱,整个系列的书都专注于一个:20世纪50年代流行的IBM 650大型机.这是第一个被"大规模的生
+产"的计算机,这种计算机的造价高达几十万美元(以今天的美元). 这种类型的计算机就是他最先接触到的计算机.
+    
+<p>  在20世纪50年代，对计算机感兴趣就等于对应用数学感兴趣. 早期的IBM 650具有基本的数学运算和控制结构,它是围绕十进制<br>而不是二进制构建的.</p>
+<p>  没有显示器,没有命令行,人便是操作系统：控制台允许操作员启用或者停止程序等等.</p>
+<p>  假设您想编写一个程序来生成斐波那契数列. FORTRAN 此时还不存在 —— FORTRAN 的出现是在IBM 650发布四年之后.因此,在这最初的<br>几年里,你不得不为你想做的事情编写出机器级别的操作代码.然后,手动的组装你的程序,用打孔机打出一堆”印”有你程序的卡片.</p>
+<p>  当然,这里有几种方法来优化你的程序. 您可以设计一个更快的算法或部署更适合该问题的数据结构.</p>
+<p>  你也能够优化程序的加载和运行方式 —— 利用机器的特性运行. 磁鼓存储器是现代硬盘的先驱，是 IBM 650 的主要存储器，但是它非<br>常慢.作为一个程序员,您的目标是最大限度地减少 12,500 RPM 鼓机的旋转延迟，这样您的所有代码和数据都可以在执行期间的适当<br>时刻轻松到达CPU. 您希望主机的CPU周期与这些鼓存储器旋转之间完美同步.</p>
+<p>  计算机编程就是在这里(在数学和机械工程的粗糙交叉点)被诞生出来的. 它可以被任何一个非常聪明的人完全理解. 但这已不再是事实.<br>唐纳德和那个时期的程序员必须比 IBM 650 (型号的计算机)更聪明. 它们熟记着每个真空管和控制开关的位置和作用. （而现在,)在<br>这方面，我们不再比我们的电脑聪明.</p>
+<p>  在第一段的前言中,唐纳德将编程称作为”一次审美体验,就像写诗或者绘画一样”.我认为这种美感依旧吸引着每一个有抱负的程序员. 自从<br>20世纪50年代以来,她沿着指数曲线行进了很长的距离之后,知道这种美感(依旧)保持完好是令人欣慰的. 虽然现在的我们不再需要设计出<br>程序,然后将其输入到一个热的、响亮的计算器中去,但是编程的美依旧渗透在抽象的每一层.</p>
+<p>  我想知道编写软件的这一表述行为的性质是如何受到(8kb内存内)手工组装的限制，以及制作穿孔卡的劳动的影响而形成的. 想象一下，在<br>Knuth的时代,编写代码的时候，会有一种激动人心的感觉，当然也有走钢丝的风险. 一个小小的错误也是会让人感受到痛苦的.</p>
+<p>  从这以后,几十年的抽象就像是一堆床垫一样(慢慢地)被堆积起来,现在我们中大多数人只是在上面打滚而已. </p>
+<p>  今天的软件的短反馈循环和扩展性是需要付出代价的.虽然如今的软件开发可能更加的有趣,但(在我们思考之前)进行黑客攻击也更容易，而<br>且(这种软件开发的方式)会产生很多问题.伟大的软件仍然需要大量的思考，(但是很显然)我们很容易就会失去严谨性.</p>
+<p>  IBM 650的约束是艰难而快速的，而今天的约束更为温和，往往是自我强加的. 手机的微小屏幕预示着经济软件和界面设计的创新浪潮. 令<br>我感到震惊的是，任何选择目标开发环境限制的人都在为我们未来的创新选择竞争环境。</p>
+<hr>
+<blockquote>
+<ul>
+<li>原文地址:<a target="_blank" rel="noopener" href="https://medium.freecodecamp.org/the-art-of-computer-programming-by-donald-knuth-82e275c8764f">‘The Art of Computer Programming’ by Donald Knuth</a></li>
+<li>原文作者:<a target="_blank" rel="noopener" href="https://nerdcoach.io/">Carl Tashian</a></li>
+<li>译者：<a target="_blank" rel="noopener" href="https://github.com/TBLGSn">TBLGSn</a></li>
+<li>本文永久链接:<a target="_blank" rel="noopener" href="https://github.com/TBLGSn/TBLGSn.github.io/edit/master/_posts/2019-5-23-The%20Art%20of%20Computer%20Programming%E2%80%99%20by%20Donald%20Knuth.markdown">here</a><br>如果发现译文存在错误或其他需要改进的地方，欢迎到对译文进行修改并 PR. 文章开头的 <strong>本文永久链接</strong> 即为本文在 GitHub 上的 MarkDown 链接。</li>
+</ul>
+</blockquote>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&text=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&is_video=false&description=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=「译」唐纳德·克努特的《计算机程序设计的艺术》&body=Check out this article: https://tblgsn.github.io/TheArtofComputerProgramming20190523.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&title=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&name=「译」唐纳德·克努特的《计算机程序设计的艺术》&description=&lt;p&gt;&lt;img src=&#34;/img/The-Art-of-Computer-Programming-by-Donald-Knuth-1.png?raw=true&#34;&gt;&lt;/p&gt;
+&lt;p&gt;书架上的书(总是)看起来很美. 不仅是因为书籍本身的魅力,而且(更是)因为书籍也能(为我们)彰显出其作者的魅力.&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/TheArtofComputerProgramming20190523.html&t=「译」唐纳德·克努特的《计算机程序设计的艺术》"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2024
+    tblgsn
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'TBLGSn/tblgsn.github.io';
+      var utterances_issue_term = 'url';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

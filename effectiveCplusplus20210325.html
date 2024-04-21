@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="导读部分有这么一句话”这本书的目的是告诉你如何高效的运用 C++”.然而，我个人觉得这本书其实也在回答另一个问题: “如何高效的学习 C++.” 这是关于《effective C++》这本书籍的第一篇文章，在记录书中的前三个章节内容的同时，也加入了一些自己的思考，同时还用 STL 源码为例，来”印证”条款的正确性. effective C++ 算是 关于 C++ 的经典书籍了，这本书要告诉你的是写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Effective C++ 笔记一">
+<meta property="og:url" content="https://tblgsn.github.io/effectiveCplusplus20210325.html">
+<meta property="og:site_name" content="tblgsn的个人博客">
+<meta property="og:description" content="导读部分有这么一句话”这本书的目的是告诉你如何高效的运用 C++”.然而，我个人觉得这本书其实也在回答另一个问题: “如何高效的学习 C++.” 这是关于《effective C++》这本书籍的第一篇文章，在记录书中的前三个章节内容的同时，也加入了一些自己的思考，同时还用 STL 源码为例，来”印证”条款的正确性. effective C++ 算是 关于 C++ 的经典书籍了，这本书要告诉你的是写">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-25T14:26:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T02:17:00.497Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="effective C++">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Effective C++ 笔记一</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="tblgsn的个人博客" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/effectiveCplusplus20212053.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/Particlefilter20201209.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/effectiveCplusplus20210325.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&text=Effective C++ 笔记一"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&is_video=false&description=Effective C++ 笔记一"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Effective C++ 笔记一&body=Check out this article: https://tblgsn.github.io/effectiveCplusplus20210325.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&name=Effective C++ 笔记一&description=&lt;p&gt;导读部分有这么一句话”这本书的目的是告诉你如何高效的运用 C++”.然而，我个人觉得这本书其实也在回答另一个问题: “如何高效的学习 C++.”&lt;/p&gt;
+&lt;p&gt;这是关于《effective C++》这本书籍的第一篇文章，在记录书中的前三个章节内容的同时，也加入了一些自己的思考，同时还用 STL 源码为例，来”印证”条款的正确性.&lt;/p&gt;
+&lt;p&gt;effective C++ 算是 关于 C++ 的经典书籍了，这本书要告诉你的是写出高效代码时应当遵循的准则，而不是带着你钻研各种技术细&lt;br&gt;节，看看那种实现方式更为高效. 要写出高效的代码，显然需要对于 C++ 的源代码有一定的理解.有趣的是通过这篇文章，通过阅读 STL 的源代码你会发现 STL 在一定程度上也遵循着书中的条款.&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/effectiveCplusplus20210325.html&t=Effective C++ 笔记一"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E8%AE%A9%E8%87%AA%E5%B7%B1%E4%B9%A0%E6%83%AF-C"><span class="toc-number">1.</span> <span class="toc-text">一. 让自己习惯 C++</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%A7%86-C-%E4%B8%BA%E4%B8%80%E4%B8%AA%E8%AF%AD%E8%A8%80%E8%81%94%E9%82%A6"><span class="toc-number">1.1.</span> <span class="toc-text">1.视 C++ 为一个语言联邦</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B0%BD%E9%87%8F%E7%94%A8const%EF%BC%8Cenum%EF%BC%8Cinline%E6%9B%BF%E4%BB%A3-define"><span class="toc-number">1.2.</span> <span class="toc-text">2.尽量用const，enum，inline替代 #define</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%B0%BD%E5%8F%AF%E8%83%BD%E4%BD%BF%E7%94%A8const"><span class="toc-number">1.3.</span> <span class="toc-text">3.尽可能使用const</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A1%AE%E5%AE%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8%E5%89%8D%EF%BC%8C%E5%BA%94%E8%AF%A5%E8%A2%AB%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text">4.确定对象使用前，应该被初始化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E9%80%A0%E3%80%81%E6%9E%90%E6%9E%84%E3%80%81%E8%B5%8B%E5%80%BC%E8%BF%90%E7%AE%97"><span class="toc-number">2.</span> <span class="toc-text">二、构造、析构、赋值运算</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-C-%E4%BC%9A%E5%B8%AE%E4%BD%A0%E8%B0%83%E7%94%A8%E5%93%AA%E4%BA%9B%E5%87%BD%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">5.C++ 会帮你调用哪些函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%A6%81%E6%AD%A2%E7%BC%96%E8%AF%91%E5%99%A8%E7%94%9F%E6%88%90%E9%BB%98%E8%AE%A4%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">6.禁止编译器生成默认函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E4%B8%BA%E5%9F%BA%E7%B1%BB%E5%A3%B0%E6%98%8E-virtual-%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="toc-number">2.3.</span> <span class="toc-text">7.为基类声明 virtual 析构函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%88%AB%E8%AE%A9%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8"><span class="toc-number">2.4.</span> <span class="toc-text">8.别让析构函数抛出异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%B8%8D%E8%A6%81%E5%9C%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8C%E6%9E%90%E6%9E%84%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%B0%83%E7%94%A8-virtual-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.</span> <span class="toc-text">9.不要在构造函数和析构过程中调用 virtual 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BB%A4-operator-%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA-reference-to-this"><span class="toc-number">2.6.</span> <span class="toc-text">10.令 operator&#x3D; 返回一个 reference to *this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%9C%A8-operator-%E4%B8%AD%E5%A4%84%E7%90%86%E2%80%9D%E8%87%AA%E6%88%91%E8%B5%8B%E5%80%BC%E2%80%9D"><span class="toc-number">2.7.</span> <span class="toc-text">11.在 operator&#x3D; 中处理”自我赋值”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E5%A4%8D%E5%88%B6%E5%AF%B9%E8%B1%A1%E6%97%B6%EF%BC%8C%E8%A6%81%E5%A4%8D%E5%88%B6%E6%AF%8F%E4%B8%80%E4%B8%AA%E6%88%90%E5%88%86"><span class="toc-number">2.8.</span> <span class="toc-text">12.复制对象时，要复制每一个成分</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、资源管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E4%BB%A5%E5%AF%B9%E8%B1%A1%E7%AE%A1%E7%90%86%E8%B5%84%E6%BA%90"><span class="toc-number">3.1.</span> <span class="toc-text">13.以对象管理资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E4%B8%AD%E5%B0%8F%E5%BF%83copying%E8%A1%8C%E4%B8%BA"><span class="toc-number">3.2.</span> <span class="toc-text">14.在资源管理类中小心copying行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E4%B8%AD%E6%8F%90%E4%BE%9B%E5%AF%B9%E5%8E%9F%E5%A7%8B%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="toc-number">3.3.</span> <span class="toc-text">15.在资源管理类中提供对原始资源的访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-new-%E5%92%8Cdelete%E8%A6%81%E9%87%87%E7%94%A8%E7%9B%B8%E5%90%8C%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="toc-number">3.4.</span> <span class="toc-text">16.new 和delete要采用相同的形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-%E4%BB%A5%E7%8B%AC%E7%AB%8B%E8%AF%AD%E5%8F%A5%E5%B0%86-newed-%E5%AF%B9%E8%B1%A1%E7%BD%AE%E5%85%A5%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="toc-number">3.5.</span> <span class="toc-text">17.以独立语句将 newed 对象置入智能指针</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Effective C++ 笔记一
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">@TBLGSn</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-03-25T14:26:00.000Z" class="dt-published" itemprop="datePublished">2021-03-25</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/C/" rel="tag">C++</a>, <a class="p-category" href="/tags/effective-C/" rel="tag">effective C++</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>导读部分有这么一句话”这本书的目的是告诉你如何高效的运用 C++”.然而，我个人觉得这本书其实也在回答另一个问题: “如何高效的学习 C++.”</p>
+<p>这是关于《effective C++》这本书籍的第一篇文章，在记录书中的前三个章节内容的同时，也加入了一些自己的思考，同时还用 STL 源码为例，来”印证”条款的正确性.</p>
+<p>effective C++ 算是 关于 C++ 的经典书籍了，这本书要告诉你的是写出高效代码时应当遵循的准则，而不是带着你钻研各种技术细<br>节，看看那种实现方式更为高效. 要写出高效的代码，显然需要对于 C++ 的源代码有一定的理解.有趣的是通过这篇文章，通过阅读 STL 的源代码你会发现 STL 在一定程度上也遵循着书中的条款.</p>
+<span id="more"></span>
+
+<h1 id="一-让自己习惯-C"><a href="#一-让自己习惯-C" class="headerlink" title="一. 让自己习惯 C++"></a>一. 让自己习惯 C++</h1><p>第一章的标题是:让自己习惯C++. 什么叫做“习惯”呢？<br>说到 C++大部分人都会联想到其他的语言，将 C++ 跟其他语言进行比较，看看谁优谁劣。<br>大部分的程序员心中都有这样的一个语言次序 → 先是机器语言、汇编语言、C语言、然后是面向对象语言JAVA，C++，PYTHON…. </p>
+<h2 id="1-视-C-为一个语言联邦"><a href="#1-视-C-为一个语言联邦" class="headerlink" title="1.视 C++ 为一个语言联邦"></a>1.视 C++ 为一个语言联邦</h2><p>C++ 在 C 的基础上加入了一些面向对象的特性( c with classes)，并不断的扩展，加入了模板，异常等。<br>最简单理解 C++ 的方式是将 C++ 视为一个相关语言的组成的联邦，而不是将其理解为单一的语言.</p>
+<p>C++ 可以理解为 由 C 语言、Object-Oriented C++、Template C++、STL 的集合.</p>
+<ul>
+<li>C<br>  C++ 支持 C 的语法，例如你可以用 C语言的 printf 函数打印东西。<br>  很多 C++ 的底层其实是用C 语言实现的,例如STL中的迭代器常常借助指针来实现.</li>
+<li>Object-Oriented C++<br>  C++ 在 C 的基础上引入了面向对象的思想，这使得 C++ 拥有与其他面向对象语言的部分特性.<br>  例如，构造函数、析构函数、封装、继承、多态、虚函数….等等</li>
+<li>Template C++<br>  这是 C++ 的泛型编程部分。</li>
+<li>STL<br>  STL 是个 template 程序库，包含容器、迭代器、算法、迭代器、函数对象、适配器。<br>  值得一提的是 STL 并不是按照面向对象的思想设计出来的…..</li>
+</ul>
+<h2 id="2-尽量用const，enum，inline替代-define"><a href="#2-尽量用const，enum，inline替代-define" class="headerlink" title="2.尽量用const，enum，inline替代 #define"></a>2.尽量用const，enum，inline替代 #define</h2><ul>
+<li>对于单纯常数，最好用const 或者enums替代#define</li>
+<li>对于形如函数的宏，最好用inline函数替代#define<blockquote>
+<p>在STL中仍有很多使用 #define的地方</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//algorithm</span></span><br><span class="line">    <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stl_algobase.h&gt;</span></span></span><br><span class="line">    <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stl_construct.h&gt;</span></span></span><br><span class="line">    <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stl_tempbuf.h&gt;</span></span></span><br><span class="line">    <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stl_algo.h&gt;</span></span></span><br><span class="line">    <span class="meta">#<span class="keyword">endif</span> <span class="comment">/* __SGI_STL_ALGORITHM */</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-尽可能使用const"><a href="#3-尽可能使用const" class="headerlink" title="3.尽可能使用const"></a>3.尽可能使用const</h2><pre><code>const能够指定一个语言约束，而编译器会强制执行这种约束。它允许你告诉编译器和其他程序员某些值不应该被改变。
+</code></pre>
+<p>const能够被用来修饰全局、namespace作用域内的变量，或者修饰文件、函数、或区块作用域中被声明为 static 的对象。也能以用来修饰classes内部的static 和 non-static 成员变量。<br>值得一提的是，const 的以下用法</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> greeing[] = <span class="string">&quot;Hello&quot;</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* <span class="type">const</span> p = greeting;</span><br><span class="line"><span class="comment">//星号右边的const关键字，表示指向的物体是常量，而星号左边的const表示指针自身是常量</span></span><br></pre></td></tr></table></figure>
+<p>在STL源代码中，我们也常常能够看见const的身影</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vector 容器中的size函数,借助cosnt声明这个函数不应该尝试改变任何值</span></span><br><span class="line"><span class="function">size_type <span class="title">size</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> <span class="built_in">size_type</span>(<span class="built_in">end</span>() - <span class="built_in">begin</span>()); &#125;</span><br><span class="line"><span class="comment">// const迭代器</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">const</span> value_type* const_iterator; </span><br></pre></td></tr></table></figure>
+<p>然而 使用const 时，我们也不能高枕无忧了,编译器遵循的是”bitwise const”.<br>下面的程序片段能够很轻松的通过编译器的检测，const说明不应该有值被改变，而实际情况也是这样的.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CTextBlock</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//重载[]，返回字符串某一个位置的引用</span></span><br><span class="line">    <span class="type">char</span>&amp; <span class="keyword">operator</span>[](<span class="type">size_t</span> pos) <span class="type">const</span>&#123;</span><br><span class="line">        <span class="keyword">return</span>  s[pos];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        cahr* s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然而，程序返回了一个引用，这使得能够很简单的改变 s 其中某一位处的值,</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">const</span> CTextBlock <span class="title">c</span><span class="params">(<span class="string">&quot;hello&quot;</span>)</span></span>;</span><br><span class="line"><span class="type">char</span>* pc = &amp;[<span class="number">0</span>];</span><br><span class="line">*pc = <span class="string">&#x27;J&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>我们创建了一个const对象，调用了一个const函数，但最终我们还是允许客户端改变它的值.</p>
+<blockquote>
+<p>将operator[]函数的类型声明为const char&amp; 就能避免出现上面的错误。</p>
+</blockquote>
+<p>一个良好的程序应该在编译阶段，尽可能的避免出现错误。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Rational</span>&#123;...&#125;</span><br><span class="line"><span class="type">const</span> Rational  <span class="keyword">operator</span>* (<span class="type">const</span> Rational* lhs, <span class="type">const</span> Rational* rhs);</span><br><span class="line"><span class="comment">//返回类型是const使得下面的程序在编译阶段就通不过</span></span><br><span class="line">Rational a, b, c;</span><br><span class="line"><span class="keyword">if</span>(a * b = c)</span><br><span class="line">    ....</span><br><span class="line"><span class="comment">//条款28指出，一个良好的用户自定义的类型应该避免无端与内置类型不兼容</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-确定对象使用前，应该被初始化"><a href="#4-确定对象使用前，应该被初始化" class="headerlink" title="4.确定对象使用前，应该被初始化"></a>4.确定对象使用前，应该被初始化</h2><p>这一点不仅仅应该在 C++ 中才应该被强调，在任何一门语言中使用未初始化的对象，常常会带来意想不到的“效果”.</p>
+<blockquote>
+<p>内置类型以外的其他东西，初始化的责任落在了构造函数上.</p>
+</blockquote>
+<p>并且,你还应当能区分赋值(assignment) 和 初始化(initialization)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">A</span>(<span class="type">const</span> string&amp; name) &#123;</span><br><span class="line">            data = name; <span class="comment">//这是赋值，而不是初始化</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">private</span>:   </span><br><span class="line">        string data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>C++ 规定:对象的成员变量的初始化动作发生在<strong>进入构造器之前</strong>，事实上甚至发生在默认的构造器之前。</p>
+</blockquote>
+<p>C++ 提供了所谓的 成员初值列(member initialization list)来替换赋值动作.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A::<span class="built_in">A</span>(<span class="type">const</span> string&amp; name)：<span class="built_in">data</span>(name)<span class="comment">//初始化</span></span><br><span class="line">&#123;&#125; <span class="comment">//</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>第一个版本首先会调用默认构造函数为data设初值，然后在进行赋值。<br>第二版本中初值列中对应的参数被作为了各成员变量构造函数的实参.(<strong>进行了copy构造</strong>)<br>使用成员初值列通常会带来更高的效率。</p>
+</blockquote>
+<h1 id="二、构造、析构、赋值运算"><a href="#二、构造、析构、赋值运算" class="headerlink" title="二、构造、析构、赋值运算"></a>二、构造、析构、赋值运算</h1><p>第一章可以被理解为 学习C++的一些“规范性”的概念.这些规范性的概念使得你能够将“C思维”转变成“C++思维”.(并不是面向过程到面向对象). 而第二章则是帮助我们理解，类的“入口”和“出口”.</p>
+<h2 id="5-C-会帮你调用哪些函数"><a href="#5-C-会帮你调用哪些函数" class="headerlink" title="5.C++ 会帮你调用哪些函数"></a>5.C++ 会帮你调用哪些函数</h2><blockquote>
+<p>如果你没有声明，C++ 会为你声明(编译器版本)一个cop构造函数、copy assignment 操作符、和一个析构函数.<br>如果你没有声明任何的构造函数，编译器也会为你声明一个 default 构造函数。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Empty</span>&#123;&#125;</span><br><span class="line"><span class="comment">//等价于：</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Empty</span>&#123;</span><br><span class="line">    pubblic:</span><br><span class="line">        <span class="built_in">Empty</span>()&#123;&#125; <span class="comment">//default构造函数</span></span><br><span class="line">        <span class="built_in">Empty</span>(<span class="type">const</span> Empty&amp; rhs)&#123;...&#125;<span class="comment">//copy构造函数</span></span><br><span class="line">        ～<span class="built_in">Empty</span>()&#123;...&#125;<span class="comment">//析构函数</span></span><br><span class="line">        Empty&amp; <span class="keyword">operator</span>=(<span class="type">const</span> Empty&amp; rhs)&#123;...&#125; <span class="comment">//copy assignment 操作符</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是编译器会在程序需要时，才会创造出上述成员函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Empty e1;<span class="comment">//default 构造函数、析构函数</span></span><br><span class="line"><span class="function">Empty <span class="title">e2</span><span class="params">(e1)</span></span>;<span class="comment">//copy 函数</span></span><br><span class="line">e2 = e1; <span class="comment">//copy assignment 操作符</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="6-禁止编译器生成默认函数"><a href="#6-禁止编译器生成默认函数" class="headerlink" title="6.禁止编译器生成默认函数"></a>6.禁止编译器生成默认函数</h2><blockquote>
+<p>当我们不想编译器为我们生成默写成员函数时，我们可将相应的成员函数声明为private,并且不予实现。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HomeforSale</span>&#123;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="comment">//只声明，不实现</span></span><br><span class="line">        <span class="built_in">HomforSale</span>(<span class="type">const</span> HomeForWSale&amp;);</span><br><span class="line">        HomeForSale&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HomeForWSale&amp;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>但 member 函数 和 friend 函数仍能调用这些模板（没有实现、连接器会报错）<br>一种可选的替代方法是:定义一个uncopyable base 类</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Uncopyable</span>&#123;</span><br><span class="line">  <span class="keyword">protected</span>:</span><br><span class="line">  <span class="built_in">Uncopyable</span>()&#123;&#125; <span class="comment">//能构造和析构 </span></span><br><span class="line">  ~<span class="built_in">Uncopyable</span>()&#123;&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">Uncopyable</span>(<span class="type">const</span> Uncopyable&amp;); <span class="comment">//不实现，但阻止 copying</span></span><br><span class="line">    Uncopyable&amp; <span class="keyword">operator</span>=(<span class="type">const</span> Uncopyable&amp;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span> : <span class="keyword">public</span> Uncopyable&#123;&#125; <span class="comment">//编译器不在默认构造 copy函数和 copy assign 分配符</span></span><br></pre></td></tr></table></figure>
+<h2 id="7-为基类声明-virtual-析构函数"><a href="#7-为基类声明-virtual-析构函数" class="headerlink" title="7.为基类声明 virtual 析构函数"></a>7.为基类声明 virtual 析构函数</h2><p>析构函数的运行方式是： 最深层派生的析构函数最先被调用，然后依次是上一层 base 类的析构函数.</p>
+<blockquote>
+<p>”virtual 析构函数，应该在带有多态性质的基类中提供“<br>“如果一个类带有任何的 virtual 函数，那么他就应该virtual函数”<br>不难看出，第二条是第一条的特例，如果一个类带有 virtual 函数，那么很显然这个类一开始就是被设计成基类。</p>
+</blockquote>
+<p>这条条款，基于以下的事实(以避免出现这样的问题):<br>当 派生类对象经由基类删除时，派生部分可能并没有被”删除“(调用的是基类的析构函数，派生类的析构函数未能被调用)。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Base</span>()&#123;&#125;</span><br><span class="line">        ~<span class="built_in">Base</span>()&#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;Base&quot;</span>&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span> : <span class="keyword">public</span> Base&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Derived</span>()&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        ~<span class="built_in">Derived</span>() &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;Derived&quot;</span> &lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Base* b = <span class="keyword">new</span> <span class="built_in">Derived</span>();</span><br><span class="line">    <span class="keyword">delete</span> b; <span class="comment">//输出结果是Base</span></span><br><span class="line">    <span class="built_in">getchar</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要避免”局部销毁“的现象，只需要将基类的析构函数声明为 virtual 即可.</p>
+<blockquote>
+<p>STL容器类的析构函数，并不是 virtual 的，所以继承这些类是个”坏主意”。<br>在特殊情况下，可以将析构函数声明为 pure virtual 函数，以使得该基类不能被实现.(但要提供实现)<br>盲目的使用 virtual 也是是错误的，因为这并不是没有代价的，系统要为此付出维护一个指针的代价才能实现 virtual</p>
+</blockquote>
+<h2 id="8-别让析构函数抛出异常"><a href="#8-别让析构函数抛出异常" class="headerlink" title="8.别让析构函数抛出异常"></a>8.别让析构函数抛出异常</h2><p>析构函数中如果出现异常，可能会出现内存泄露的问题.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Widget</span>&#123;</span><br><span class="line">  ~Wif=<span class="built_in">dget</span>()&#123;...&#125;<span class="comment">//可能抛出异常</span></span><br><span class="line">  <span class="type">void</span> <span class="built_in">doSomthing</span>()&#123;</span><br><span class="line">    std::vector&lt;Widget&gt; v;</span><br><span class="line">  &#125;<span class="comment">//退出作用域 v 销毁、析构过程中如果抛出异常，之后元素的“析构”是不可预测的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果析构函数中的操作，一定要抛出异常，应该用 try {} catch语句捕获异常.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Widget</span>&#123;</span><br><span class="line">  ~Wif=<span class="built_in">dget</span>()&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;...</span><br><span class="line">    &#125;<span class="built_in">catch</span>(...) &#123;</span><br><span class="line">      <span class="comment">//报告或者隐藏消息</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">void</span> <span class="built_in">doSomthing</span>()&#123;</span><br><span class="line">    std::vector&lt;Widget&gt; v;</span><br><span class="line">  &#125;<span class="comment">//退出作用域 v 销毁、析构过程中如果抛出异常，之后元素的“析构”是不可预测的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一个更佳的策略是：重新设计出口，让用户负责处理将可能抛出异常。其他函数抛出异常比析构函数抛出异常更好，因为析构函数抛出异常总是会带来“过早结束程序、或发生不确定行为”的风险</p>
+</blockquote>
+<h2 id="9-不要在构造函数和析构过程中调用-virtual-函数"><a href="#9-不要在构造函数和析构过程中调用-virtual-函数" class="headerlink" title="9.不要在构造函数和析构过程中调用 virtual 函数"></a>9.不要在构造函数和析构过程中调用 virtual 函数</h2><p>派生类对象内的基类成分会在派生类被构造之前被构造完成。In other words，基类的构造函数会先于派生类被调用.</p>
+<p>然而，如果在基类构造函数中调用 virtual 函数，那么实际上是调用的基类内的版本，而不是派生类实现的版本.</p>
+<h2 id="10-令-operator-返回一个-reference-to-this"><a href="#10-令-operator-返回一个-reference-to-this" class="headerlink" title="10.令 operator&#x3D; 返回一个 reference to *this"></a>10.令 operator&#x3D; 返回一个 reference to *this</h2><p>为实现”连锁赋值”，赋值操作符必须返回一个 reference 指向，操作符的左侧参数.(这是一个必须协议)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    ...</span><br><span class="line">    <span class="function">A&amp; <span class="title">operator</span><span class="params">(<span class="type">const</span> A&amp; rhs)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其他赋值运算(例如，*&#x3D;、+&#x3D;也适用)<br>这只是一个协议，并不一定要严格遵守，但”定制类型应该与内置类型行为一致“</p>
+</blockquote>
+<p>STL中的list这部分的源代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    list&lt;T, Alloc&gt;&amp; list&lt;T, Alloc&gt;::<span class="keyword">operator</span>=(<span class="type">const</span> list&lt;T, Alloc&gt;&amp; x) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;x) &#123;</span><br><span class="line">        iterator first1 = <span class="built_in">begin</span>();</span><br><span class="line">        iterator last1 = <span class="built_in">end</span>();</span><br><span class="line">        const_iterator first2 = x.<span class="built_in">begin</span>();</span><br><span class="line">        const_iterator last2 = x.<span class="built_in">end</span>();</span><br><span class="line">        <span class="keyword">while</span> (first1 != last1 &amp;&amp; first2 != last2) *first1++ = *first2++;</span><br><span class="line">        <span class="keyword">if</span> (first2 == last2)</span><br><span class="line">        <span class="built_in">erase</span>(first1, last1);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">insert</span>(last1, first2, last2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-在-operator-中处理”自我赋值”"><a href="#11-在-operator-中处理”自我赋值”" class="headerlink" title="11.在 operator&#x3D; 中处理”自我赋值”"></a>11.在 operator&#x3D; 中处理”自我赋值”</h2><p>这条建议的目的在于避免出现”自我赋值的“情况.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Class Widget&#123;&#125;</span><br><span class="line">Widget w;</span><br><span class="line">w = w; <span class="comment">// 显示 自我赋值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&#123;&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span> : <span class="keyword">public</span> Base&#123;&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">(<span class="type">const</span> Base&amp; rb, Derived* pd)</span></span>; <span class="comment">//rb 和*pd可能其实是同一个对象</span></span><br><span class="line"><span class="comment">//STL中list源代码</span></span><br><span class="line">list&lt;T, Alloc&gt;&amp; list&lt;T, Alloc&gt;::<span class="keyword">operator</span>=(<span class="type">const</span> list&lt;T, Alloc&gt;&amp; x) &#123;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">this</span> != &amp;x) &#123; <span class="comment">//进行”认同测试“</span></span><br><span class="line">    iterator first1 = <span class="built_in">begin</span>();</span><br><span class="line">    iterator last1 = <span class="built_in">end</span>();</span><br><span class="line">    const_iterator first2 = x.<span class="built_in">begin</span>();</span><br><span class="line">    const_iterator last2 = x.<span class="built_in">end</span>();</span><br><span class="line">    <span class="keyword">while</span> (first1 != last1 &amp;&amp; first2 != last2) *first1++ = *first2++;</span><br><span class="line">    <span class="keyword">if</span> (first2 == last2)</span><br><span class="line">    <span class="built_in">erase</span>(first1, last1);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">insert</span>(last1, first2, last2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="12-复制对象时，要复制每一个成分"><a href="#12-复制对象时，要复制每一个成分" class="headerlink" title="12.复制对象时，要复制每一个成分"></a>12.复制对象时，要复制每一个成分</h2><p>只要你承担起”为派生类撰写copying函数”的重任时，你必须小心的复制其基类中的成员.(这些成员往往是private的)，此时，你应该让derived class的copying函数调用对应的基类中的元素</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Base</span>(<span class="type">const</span> Base&amp; rhs);</span><br><span class="line">        Base&amp; <span class="keyword">operator</span>=(<span class="type">const</span> Base&amp;rhs);</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        string name;</span><br><span class="line">&#125;;</span><br><span class="line">Base::<span class="built_in">Base</span>(<span class="type">const</span> Base&amp; rhs):<span class="built_in">name</span>(rhs.name)&#123;&#125;</span><br><span class="line">Base&amp; Base::<span class="keyword">operator</span>=(<span class="type">const</span> Base&amp; rhs)&#123;</span><br><span class="line">    name = rhs.name;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line">Class Derived : <span class="keyword">public</span> Base&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Derived</span>(<span class="type">const</span> Derived&amp; rhs);</span><br><span class="line">        Derived&amp; <span class="keyword">operator</span>&amp;(<span class="type">const</span> Derived&amp; rhs);</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        string pwd;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//错误版本</span></span><br><span class="line">Derived::<span class="built_in">Derived</span>(<span class="type">const</span> Derived&amp; rhs):</span><br><span class="line"><span class="built_in">pwd</span>(rhs.pwd)&#123;&#125;</span><br><span class="line">Derived&amp; <span class="keyword">operator</span>&amp;(<span class="type">const</span> Derived&amp; rhs)&#123;</span><br><span class="line">    pwd= rhs.pwd;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//正确版本</span></span><br><span class="line">Derived::<span class="built_in">Derived</span>(<span class="type">const</span> Derived&amp; rhs):</span><br><span class="line"><span class="built_in">pwd</span>(rhs.pwd),<span class="built_in">Base</span>(rhs)&#123;&#125;</span><br><span class="line">Derived&amp; <span class="keyword">operator</span>&amp;(<span class="type">const</span> Derived&amp; rhs)&#123;</span><br><span class="line">    Base::<span class="keyword">operator</span>=(rhs);</span><br><span class="line">    pwd= rhs.pwd;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、资源管理"><a href="#三、资源管理" class="headerlink" title="三、资源管理"></a>三、资源管理</h1><h2 id="13-以对象管理资源"><a href="#13-以对象管理资源" class="headerlink" title="13.以对象管理资源"></a>13.以对象管理资源</h2><blockquote>
+<p>把资源放进对象内，我们便可依赖 C++ 的“析构函数自动调用机制”确保资源被释放</p>
+</blockquote>
+<p>合理的使用 auto_ptr 、shared_ptr 进行资源的管理.</p>
+<blockquote>
+<p>不过用智能指针析构函数中使用的是 delete ，而非delete[]，因此用其管理动态分配的array(string[10])是一个坏主意</p>
+</blockquote>
+<h2 id="14-在资源管理类中小心copying行为"><a href="#14-在资源管理类中小心copying行为" class="headerlink" title="14.在资源管理类中小心copying行为"></a>14.在资源管理类中小心copying行为</h2><p>shared_ptr允许指定所谓的“删除器”(一个函数或是一个函数对象),当引用为 0 时，便调用。auto_ptr则不提供该能力，当引用为 0 时便直接删除其指针.<br>使用方式形如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">shared_ptr&lt;<span class="type">int</span>&gt; <span class="title">p</span><span class="params">(raw指针, 删除器)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="15-在资源管理类中提供对原始资源的访问"><a href="#15-在资源管理类中提供对原始资源的访问" class="headerlink" title="15.在资源管理类中提供对原始资源的访问"></a>15.在资源管理类中提供对原始资源的访问</h2><p>条框13指出，借助智能指针对资源进行管理.但我们有时候需要将 RAII 对象，转变成原 对象.</p>
+<ul>
+<li>智能指针都提供一个 get成员函数，来执行<strong>显式转换</strong>，也就是返回raw pointer 的副本.</li>
+<li>智能指针也重载了 operator-&gt; 和 operator* ，允许<strong>隐式转换</strong>至raw pointer.<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Investment</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">bool</span> <span class="title">isTaxFree</span><span class="params">()</span> cosnt</span>;</span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">Investment* <span class="title">createInvestment</span><span class="params">()</span></span>;<span class="comment">//工厂方法</span></span><br><span class="line"><span class="function">shared_ptr&lt;Investment&gt; <span class="title">pill</span><span class="params">(createInvestment())</span></span>; <span class="comment">//用智能指针管理一笔资源</span></span><br><span class="line"><span class="type">bool</span> taxablel = !(pil-&gt;<span class="built_in">isTaxFree</span>());</span><br><span class="line"><span class="type">bool</span> taxable2 = !((*pil).<span class="built_in">isTaxFree</span>());</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="16-new-和delete要采用相同的形式"><a href="#16-new-和delete要采用相同的形式" class="headerlink" title="16.new 和delete要采用相同的形式"></a>16.new 和delete要采用相同的形式</h2><p>会导致内存泄露的问题</p>
+<h2 id="17-以独立语句将-newed-对象置入智能指针"><a href="#17-以独立语句将-newed-对象置入智能指针" class="headerlink" title="17.以独立语句将 newed 对象置入智能指针"></a>17.以独立语句将 newed 对象置入智能指针</h2><p>shared_ptr的构造函数需要一个原始指针，但shared_ptr 的构造函数被声明为 explict, 所以无法进行隐形转换.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">priority</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">processWidget</span><span class="params">(shared_ptr&lt;Widget&gt; pw, <span class="type">int</span> priority)</span></span>;</span><br><span class="line"><span class="comment">//通不过编译</span></span><br><span class="line"><span class="built_in">processWidget</span>(<span class="keyword">new</span> Widget, <span class="built_in">priority</span>());<span class="comment">//调用</span></span><br><span class="line"><span class="comment">//能通过编译，但容易导致资源泄漏(prioruty调用异常,new 指针遗失)(可能按以下的顺序执行：</span></span><br><span class="line"><span class="comment">//“new Widget”、调用priority、调用shared_ptr构造函数)</span></span><br><span class="line"><span class="built_in">processWidget</span>(<span class="built_in">shared_ptr</span>&lt;Widget&gt;(<span class="keyword">new</span> Widget</span><br><span class="line">), <span class="built_in">priority</span>());</span><br><span class="line"><span class="comment">//安全方式</span></span><br><span class="line"><span class="function">shared_ptr&lt;Widget&gt; <span class="title">pw</span><span class="params">(<span class="keyword">new</span> Widget)</span></span>;</span><br><span class="line"><span class="built_in">processWidget</span>(pw, <span class="built_in">priority</span>());</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E8%AE%A9%E8%87%AA%E5%B7%B1%E4%B9%A0%E6%83%AF-C"><span class="toc-number">1.</span> <span class="toc-text">一. 让自己习惯 C++</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%A7%86-C-%E4%B8%BA%E4%B8%80%E4%B8%AA%E8%AF%AD%E8%A8%80%E8%81%94%E9%82%A6"><span class="toc-number">1.1.</span> <span class="toc-text">1.视 C++ 为一个语言联邦</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B0%BD%E9%87%8F%E7%94%A8const%EF%BC%8Cenum%EF%BC%8Cinline%E6%9B%BF%E4%BB%A3-define"><span class="toc-number">1.2.</span> <span class="toc-text">2.尽量用const，enum，inline替代 #define</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%B0%BD%E5%8F%AF%E8%83%BD%E4%BD%BF%E7%94%A8const"><span class="toc-number">1.3.</span> <span class="toc-text">3.尽可能使用const</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A1%AE%E5%AE%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8%E5%89%8D%EF%BC%8C%E5%BA%94%E8%AF%A5%E8%A2%AB%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text">4.确定对象使用前，应该被初始化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E9%80%A0%E3%80%81%E6%9E%90%E6%9E%84%E3%80%81%E8%B5%8B%E5%80%BC%E8%BF%90%E7%AE%97"><span class="toc-number">2.</span> <span class="toc-text">二、构造、析构、赋值运算</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-C-%E4%BC%9A%E5%B8%AE%E4%BD%A0%E8%B0%83%E7%94%A8%E5%93%AA%E4%BA%9B%E5%87%BD%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">5.C++ 会帮你调用哪些函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%A6%81%E6%AD%A2%E7%BC%96%E8%AF%91%E5%99%A8%E7%94%9F%E6%88%90%E9%BB%98%E8%AE%A4%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">6.禁止编译器生成默认函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E4%B8%BA%E5%9F%BA%E7%B1%BB%E5%A3%B0%E6%98%8E-virtual-%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="toc-number">2.3.</span> <span class="toc-text">7.为基类声明 virtual 析构函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%88%AB%E8%AE%A9%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8"><span class="toc-number">2.4.</span> <span class="toc-text">8.别让析构函数抛出异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%B8%8D%E8%A6%81%E5%9C%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8C%E6%9E%90%E6%9E%84%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%B0%83%E7%94%A8-virtual-%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.</span> <span class="toc-text">9.不要在构造函数和析构过程中调用 virtual 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BB%A4-operator-%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA-reference-to-this"><span class="toc-number">2.6.</span> <span class="toc-text">10.令 operator&#x3D; 返回一个 reference to *this</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%9C%A8-operator-%E4%B8%AD%E5%A4%84%E7%90%86%E2%80%9D%E8%87%AA%E6%88%91%E8%B5%8B%E5%80%BC%E2%80%9D"><span class="toc-number">2.7.</span> <span class="toc-text">11.在 operator&#x3D; 中处理”自我赋值”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E5%A4%8D%E5%88%B6%E5%AF%B9%E8%B1%A1%E6%97%B6%EF%BC%8C%E8%A6%81%E5%A4%8D%E5%88%B6%E6%AF%8F%E4%B8%80%E4%B8%AA%E6%88%90%E5%88%86"><span class="toc-number">2.8.</span> <span class="toc-text">12.复制对象时，要复制每一个成分</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、资源管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E4%BB%A5%E5%AF%B9%E8%B1%A1%E7%AE%A1%E7%90%86%E8%B5%84%E6%BA%90"><span class="toc-number">3.1.</span> <span class="toc-text">13.以对象管理资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E4%B8%AD%E5%B0%8F%E5%BF%83copying%E8%A1%8C%E4%B8%BA"><span class="toc-number">3.2.</span> <span class="toc-text">14.在资源管理类中小心copying行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E5%9C%A8%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%B1%BB%E4%B8%AD%E6%8F%90%E4%BE%9B%E5%AF%B9%E5%8E%9F%E5%A7%8B%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="toc-number">3.3.</span> <span class="toc-text">15.在资源管理类中提供对原始资源的访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-new-%E5%92%8Cdelete%E8%A6%81%E9%87%87%E7%94%A8%E7%9B%B8%E5%90%8C%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="toc-number">3.4.</span> <span class="toc-text">16.new 和delete要采用相同的形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-%E4%BB%A5%E7%8B%AC%E7%AB%8B%E8%AF%AD%E5%8F%A5%E5%B0%86-newed-%E5%AF%B9%E8%B1%A1%E7%BD%AE%E5%85%A5%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="toc-number">3.5.</span> <span class="toc-text">17.以独立语句将 newed 对象置入智能指针</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/effectiveCplusplus20210325.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&text=Effective C++ 笔记一"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&is_video=false&description=Effective C++ 笔记一"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Effective C++ 笔记一&body=Check out this article: https://tblgsn.github.io/effectiveCplusplus20210325.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&title=Effective C++ 笔记一"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/effectiveCplusplus20210325.html&name=Effective C++ 笔记一&description=&lt;p&gt;导读部分有这么一句话”这本书的目的是告诉你如何高效的运用 C++”.然而，我个人觉得这本书其实也在回答另一个问题: “如何高效的学习 C++.”&lt;/p&gt;
+&lt;p&gt;这是关于《effective C++》这本书籍的第一篇文章，在记录书中的前三个章节内容的同时，也加入了一些自己的思考，同时还用 STL 源码为例，来”印证”条款的正确性.&lt;/p&gt;
+&lt;p&gt;effective C++ 算是 关于 C++ 的经典书籍了，这本书要告诉你的是写出高效代码时应当遵循的准则，而不是带着你钻研各种技术细&lt;br&gt;节，看看那种实现方式更为高效. 要写出高效的代码，显然需要对于 C++ 的源代码有一定的理解.有趣的是通过这篇文章，通过阅读 STL 的源代码你会发现 STL 在一定程度上也遵循着书中的条款.&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/effectiveCplusplus20210325.html&t=Effective C++ 笔记一"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2024
+    tblgsn
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'TBLGSn/tblgsn.github.io';
+      var utterances_issue_term = 'url';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

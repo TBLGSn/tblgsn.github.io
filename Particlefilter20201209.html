@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探粒子滤波">
+<meta property="og:url" content="https://tblgsn.github.io/Particlefilter20201209.html">
+<meta property="og:site_name" content="tblgsn的个人博客">
+<meta property="og:description" content="粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tblgsn.github.io/img/SIS.jpg?raw=true">
+<meta property="og:image" content="https://tblgsn.github.io/img/SIS.jpg?raw=true">
+<meta property="article:published_time" content="2020-12-09T15:30:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T02:17:00.497Z">
+<meta property="article:author" content="tblgsn">
+<meta property="article:tag" content="粒子滤波">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tblgsn.github.io/img/SIS.jpg?raw=true">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>初探粒子滤波</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="tblgsn的个人博客" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/effectiveCplusplus20210325.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/KLT20201116.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/Particlefilter20201209.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/Particlefilter20201209.html&text=初探粒子滤波"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/Particlefilter20201209.html&is_video=false&description=初探粒子滤波"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初探粒子滤波&body=Check out this article: https://tblgsn.github.io/Particlefilter20201209.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/Particlefilter20201209.html&name=初探粒子滤波&description=&lt;p&gt;&lt;img src=&#34;/img/SIS.jpg?raw=true&#34;&gt;&lt;br&gt;粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/Particlefilter20201209.html&t=初探粒子滤波"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">数学模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%BB%A4%E6%B3%A2"><span class="toc-number">2.</span> <span class="toc-text">贝叶斯滤波</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%A8%A1%E6%8B%9F"><span class="toc-number">3.</span> <span class="toc-text">蒙特卡洛模拟</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E6%80%A7%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">重要性采样</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E8%B4%AF%E9%87%8D%E8%A6%81%E6%80%A7%E9%87%87%E6%A0%B7-SIS-%E7%AE%97%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">序贯重要性采样(SIS)算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        初探粒子滤波
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">@TBLGSn</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-09T15:30:00.000Z" class="dt-published" itemprop="datePublished">2020-12-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2/" rel="tag">粒子滤波</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/img/SIS.jpg?raw=true"><br>粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度</p>
+<span id="more"></span>
+
+<h1 id="数学模型"><a href="#数学模型" class="headerlink" title="数学模型"></a>数学模型</h1><p>我们建立了一个状态的空间模型。<br>用$x_i$ 表示运动系统当前的状态，$y_i$表示测量到的数据,$v_k$表示当前系统的过程噪音，$n_i$表示测量噪声.<br>再分别用函数f和h表示出状态方程和测量方程:<br>$$x_k &#x3D; f_k(x_{k-1},v_{k-1}) \tag{1} $$<br>$$y_k &#x3D; h_k(x_k,n_k) \tag{2}$$</p>
+<h1 id="贝叶斯滤波"><a href="#贝叶斯滤波" class="headerlink" title="贝叶斯滤波"></a>贝叶斯滤波</h1><blockquote>
+<p>在跟踪注册领域，上述数学模型可以表述为：已知$t$时刻的状态(通常用旋转矩阵和平移矩阵表示)，估计出$t+1$的状态.</p>
+</blockquote>
+<p>从贝叶斯的观点来看，状态估计问题就是根据目前知道的信息(先验知识)推导出后验概率密度$P(x_k | y_{1:k})$的值。</p>
+<p>贝叶斯滤波原理的实质是试图用所有已知信息来构造系统状态变量的后验概率密度, 即用系统模型预测状态的先验概率密度, 再使用最近的量测值进行修正, 得到后验概率密度。这样通过量测数据$y_{1:k}$, 来递推计算状态$x_k$取不同值时的<strong>置信度$P(x_{1:k}|y_{1:k})$</strong>, 由此获得状态的最优估计[6].</p>
+<p>贝叶斯滤波通过两个过程来计算这个值,一个过程是预测过程，一个过程是更新过程。</p>
+<ul>
+<li>预测过程<br>  根据状态方程(1)预测出下一状态的概率密度(又被称为先验概率密度).也就是由上一刻的概率密度$P(x_{k-1},y_{1:k-1})$得到$P(x_k,y_{1:k-1})$<br>  预测公式：<br>  $$<br>  P(x_k, x_{k-1}|y_{1:k-1})<br>  &#x3D; P(x_k | x_{k-1}, y_{1:k-1})P(x_{k-1}, x_{k-1}|y_{1:k-1})<br>  &#x3D; P(x_k | x_{k-1})P(x_{k-1}, x_{k-1}|y_{1:k-1}<br>  )<br>  $$<blockquote>
+<ul>
+<li>联合分布概率公式</li>
+<li>一般都先假设系统的状态转移服从一阶马尔科夫模型，即当前时刻的状态$x_k$只与上一个时刻的状态$x_{k-1}$有关。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>对上式两边对${\rm d} x_{k-1}$积分有:</p>
+<p>$$<br>P(x_k,y_{1:k-1})<br>&#x3D; \int P(x_k | x_{k-1})P(x_{k-1}, x_{k-1}|y_{1:k-1}) {\rm d}x_{k-1}<br>\tag{3}<br>$$</p>
+<ul>
+<li>更新过程<br>  利用测量值$y_k$对预测过程计算出来的先验概率密度进行修正,也就是根据$P(x_k, y_{1:k-1})$得到后验概率$P(x_k |y_{1:k})$<br>  这个后验概率就是我们真正想要的一个东西。<br>  $$<br>  P(x_k,y_{1:k})<br>  &#x3D; \frac {P(y_k|x_k, y_{1:k-1})P(x_k|y_{1:k-1})}<br>  {P(y_k|y_{1:k-1})}<br>  &#x3D; \frac {P(y_k|x_k)P(x_k|y_{1:k-1})}<br>  {P(y_k|y_{1:k-1})}<br>  \tag{4}<br>  $$<blockquote>
+<ul>
+<li>归一常数:$<br>P(y_k|y_{1:k-1}) &#x3D; \int {P(y_k|x_k)P(x_k|y_{1:k-1})}{\rm d}x_k<br>$</li>
+<li>$y_k$ 只与$x_k$有关</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>我们知道了k时刻的后验概率密度$P(y_k|y_{1:k})$,在重复预测和更新过程就可以递归的求解出k+1时刻的后验概率密度$P(y_{k+1}|y_{1:k+1})$</p>
+<p>目标状态的最优估计值可以通过后验密度函数进行计算，通常我们根据最小均方误差准则，将具有极大后验概率密度的状态或条件均值作为系统状态的估计值[2],即：<br>$$<br>\hat{x_k}^{MMSE} &#x3D; E(f(x_k)|Y_k) &#x3D; \int f(x_k) P(x_k|Y_k) {\rm d}x_k<br>\tag{5}<br>$$</p>
+<blockquote>
+<ul>
+<li>$Y_k 等同于y_{1:k}$</li>
+</ul>
+</blockquote>
+<p>贝叶斯以递推的方式给出了后验滤波概率密度函数的最优解,然而，这种循环传播最多是一种概念上的解决方案[2]。现有的非线性滤波器多采用近似的计算方法解决积分的问题，以此来获取估计的次优解。</p>
+<h1 id="蒙特卡洛模拟"><a href="#蒙特卡洛模拟" class="headerlink" title="蒙特卡洛模拟"></a>蒙特卡洛模拟</h1><p>蒙特卡洛模拟提供了一种将积分问题转变成有限样本的求和问题。这使得我们能够避开(3)式中复杂的积分计算。<br>假设我们能够从后验概率密度$P(x_k, Y_k)$中抽取N个独立同分布的随机样本$x_k^{i}$ 则有:<br>$$后验概率P(x_k, Y_k) \approx \frac {1} {N} \sum_{i&#x3D;1}^N \delta{(x_k - x_k^i)}<br>\tag{6}<br>$$</p>
+<blockquote>
+<ul>
+<li>$\delta(.)$:狄拉克函数</li>
+</ul>
+</blockquote>
+<p>至此，我们找到了一种方法使得，我们引入一个已知的密度函数，就可以利用式子(6)近似的逼近真实的后验概率密度函数(当我们采取的粒子数量足够大时)。由公式(5)和公式(6)有下面的公式(7):<br>$$<br>E(f(x_k)|Y_k) &#x3D; \int f(x_k) P(x_k|Y_k) {\rm d}x_k<br>&#x3D; \frac {1} {N} \sum_{i&#x3D;1}^N f(x_k^i)<br>\tag{7}<br>$$</p>
+<blockquote>
+<ul>
+<li>$x_k^i此时表示抽取出来的样本$</li>
+<li>函数f表示的是每个粒子的状态函数</li>
+</ul>
+</blockquote>
+<p>然而在实际的计算中，我们通常无法从后验概率分布中抽取样本，这个时候重要性采样法为我们提供了另一种逼近后验概率密度的方法。</p>
+<h1 id="重要性采样"><a href="#重要性采样" class="headerlink" title="重要性采样"></a>重要性采样</h1><p>重要性采样提供了一种方法,使得我们能够在无法在原概率分布抽样时，引入了一个<strong>已知，容易采样的重要性概率密度函数</strong>$q(x_k, Y_k)$, 从中生成采样粒子，利用这些粒子的加权和来逼近后验概率密度(P(x_k, Y_k))。具体来说：重要性采样为上面的抽取的随机样本$x_k^i$分配一个重要性权重$w_k^i$<br>$$<br>P(x_k, Y_k) \approx \frac {1} {N} \sum_{i&#x3D;1}^N w_k^i \delta{(x_k - x_k^i)} \tag{8}<br>$$</p>
+<blockquote>
+<ul>
+<li>$w_k^i ∝<br> \frac {P(x_k^i|Y_k)}{q(x_k^i|Y_k)}$</li>
+<li>$\sum_i{w_k^i} &#x3D; 1$</li>
+<li>具体推导可参考[3][4]</li>
+</ul>
+</blockquote>
+<p>当采样的粒子数很大时，式(8)便可近似的逼近真实的后验概率密度函数，此时式(7)可表达为：<br>$$<br>E(f(x_k)|Y_k) &#x3D; \frac {1} {N} \sum_{i&#x3D;1}^N f(x_k^i)w_k^i<br>&#x3D; \frac {1} {N} \sum_{i&#x3D;1}^N f(x_k^i) \frac {P(x_k^i |Y_k)}{q(x_k^i|Y_k)}<br>\tag{9}<br>$$</p>
+<blockquote>
+<p>此时的$x_k^i表示从密度函数q(x_k,Y_k)分布中抽取的样本$</p>
+</blockquote>
+<h1 id="序贯重要性采样-SIS-算法"><a href="#序贯重要性采样-SIS-算法" class="headerlink" title="序贯重要性采样(SIS)算法"></a>序贯重要性采样(SIS)算法</h1><p>序贯重要性抽样(SIS)算法是一种蒙特卡洛(MC)方法，它是过去几十年发展起来的大多数序贯重要性抽样滤波器的基础.[1]它将统计学中的序贯分析方法应用到蒙特卡洛中，从而实现后验滤波概率密度的递推估计。[2]</p>
+<p>重要性采样的每个粒子的权重都采用的直接计算的方法，效率低，因为每增加一个采样$p( x(k) |y(1:k))$都得重新计算，并且还不好计算这个式子。所以求权重时能否避开计算$p(x_k|y_{1:k})$？而最佳的形式是能够以递推的方式去计算权重，这就是所谓的序贯重要性采样（SIS），粒子滤波的原型。[3]</p>
+<p>我们对我们假设的重要性概率密度函数$q(x_{0:k},y_{1:k})$进行因式分解为:<br>$$<br>q(x_{0:k},y_{1:k})&#x3D;q(x_k |x_{0:k-1},y_{1:k})q(x_{0:k-1}|y_{1:k-1})<br>$$<br>经过推导有:<br>$$<br>w_k^i∝<br>w_{k-1}^i<br>\frac {P(y_k|x_k^i)P(x_k^i|x_{k-1}^i)}<br>{q(x_k^i|x_{0:k-1}^i,y_{1:k})}<br>$$</p>
+<blockquote>
+<p>详细推导过程见[1]<br>补一句:”计算机的尽头是数学,数学的尽头是哲学”.</p>
+</blockquote>
+<p>一般情况下有$q(x_k|x_{0:k-1},y_{1:k})&#x3D;q(x_k|x_{k-1},y_k)($这使得我们不在需要保存${x_0},….,x_{k-1}$),则由上式有:<br>$$<br>w_k^i∝<br>w_{k-1}^i<br>\frac {P(y_k|x_k^i)P(x_k^i|x_{k-1}^i)}<br>{q(x_k^i|x_{k-1}^i,y_k)}<br>\tag{10}<br>$$</p>
+<blockquote>
+<p>这时重要性密度只依赖于$x_{k-1}和y_k$</p>
+</blockquote>
+<p>$$<br>P(x_k, Y_k) \approx  \sum_{i&#x3D;1}^{N_s} w_k^i \delta{(x_k - x_k^i)} \tag{11}<br>(N_s → \infty)<br>$$<br>粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度。<br>序贯重要性采样算法从重要性概率密度函数中生成采样粒子，并随着测量值的依次到来递推求得相应的权值，最终以粒子加权和的形式来描述后验滤波概率密度，进而得到状态估计。</p>
+<p>SIS伪代码如下:<br><img src="/img/SIS.jpg?raw=true" alt="SIS.jpg"></p>
+<ol>
+<li><p>$&lt;!–swig￼0–&gt;_{i&#x3D;1}^N,Y_k)$</p>
+</li>
+<li><p>$For i &#x3D;1:N_s$<br>$ 抽取粒子x_k^i 属于q(x_k|x_{k-1}^i, y_k)$<br>$通过式(10)更新粒子权重w_k^i$</p>
+</li>
+<li><p>End for</p>
+</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/heyijia0327/article/details/40929097">Particle Filter Tutorial 粒子滤波：从推导到应用</a></li>
+<li>[1] 《A Tutorial on Particle Filters for Online Nonlinear&#x2F;Non-Gaussian Bayesian Tracking》</li>
+<li>[2] 百度文库 粒子滤波理论</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/piaoxuezhong/article/details/78619150">3. particle filtering—粒子滤波（讲的很通俗易懂）
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41217212">4. 重要性采样（Importance Sampling）
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/268624245">5.从概率到贝叶斯滤波
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://kns.cnki.net/KXReader/Detail?PlatForm=kdoc&TIMESTAMP=637422606932500000&DBCODE=CJFD&TABLEName=CJFD2004&FileName=XDLD200401009&RESULT=1&SIGN=ZuT/bwMuEPm4S8j9JVh3LEFxmVQ=">基于贝叶斯原理的粒子滤波技术概述</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/masaddev/OpenCVParticleFilter">OpenCVParticleFilter</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">数学模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%BB%A4%E6%B3%A2"><span class="toc-number">2.</span> <span class="toc-text">贝叶斯滤波</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%A8%A1%E6%8B%9F"><span class="toc-number">3.</span> <span class="toc-text">蒙特卡洛模拟</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E6%80%A7%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">重要性采样</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E8%B4%AF%E9%87%8D%E8%A6%81%E6%80%A7%E9%87%87%E6%A0%B7-SIS-%E7%AE%97%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">序贯重要性采样(SIS)算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://tblgsn.github.io/Particlefilter20201209.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://tblgsn.github.io/Particlefilter20201209.html&text=初探粒子滤波"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://tblgsn.github.io/Particlefilter20201209.html&is_video=false&description=初探粒子滤波"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初探粒子滤波&body=Check out this article: https://tblgsn.github.io/Particlefilter20201209.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://tblgsn.github.io/Particlefilter20201209.html&title=初探粒子滤波"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://tblgsn.github.io/Particlefilter20201209.html&name=初探粒子滤波&description=&lt;p&gt;&lt;img src=&#34;/img/SIS.jpg?raw=true&#34;&gt;&lt;br&gt;粒子滤波算法的核心思想就是通过利用一系列随机样本的加权和表示后验概率密度&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://tblgsn.github.io/Particlefilter20201209.html&t=初探粒子滤波"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2024
+    tblgsn
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/tblgsn">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'TBLGSn/tblgsn.github.io';
+      var utterances_issue_term = 'url';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
